@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Top Addresses</title>
+    <link rel="stylesheet" href="styles/style.css">
+</head>
+<body>
+    <header>
+        <div id="logo">
+            <a href="index.html">
+                <img src="assets/fab-logo-o.png" alt="Logo">
+            </a>
+        </div>
+        <div id="search-container">
+            <input type="text" id="search-field" placeholder="Search by block number, block hash, transaction hash, or address...">
+            <button id="search-button">Search</button>
+        </div>
+    </header>
+    <main>
+        <h2>Top Addresses</h2>
+        <table id="top-addresses-table" class="styled-table">
+            <thead>
+                <tr>
+                    <th>Address</th>
+                    <th>Balance (FAB)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Top addresses will be inserted here by JavaScript -->
+            </tbody>
+        </table>
+        <div id="pagination-controls">
+            <button id="first-page" disabled>First</button>
+            <button id="prev-page" disabled>Prev</button>
+            <span id="page-info">Page 1</span>
+            <button id="next-page">Next</button>
+            <button id="last-page">Last</button>
+            <input type="number" id="page-input" min="1" placeholder="Page">
+            <button id="go-to-page">Go</button>
+        </div>
+    </main>
+    <footer>
+        <p>&copy; 2025 Blockchain Browser</p>
+    </footer>
+    <script src="scripts/top-addresses.js"></script>
+    <script src="scripts/search.js"></script>
+</body>
+</html>

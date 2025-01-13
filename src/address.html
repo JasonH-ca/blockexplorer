@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Block Explorer</title>
+    <link rel="stylesheet" href="styles/style.css">
+</head>
+<body>
+    <header>
+        <div id="logo">
+            <a href="index.html">
+                <img src="assets/fab-logo-o.png" alt="Logo">
+            </a>
+        </div>
+        <div id="search-container">
+            <input type="text" id="search-field" placeholder="Search by block number, block hash, transaction hash, or address...">
+            <button id="search-button">Search</button>
+        </div>
+    </header>
+    <main>
+        <section id="address-info">
+            <h2>Address: <span id="address"></span></h2>
+            <p>Balance: <span id="balance"></span> FAB</p>
+            <h3>Transaction History</h3>
+            <div id="loading-spinner" class="spinner" style="display: none;"></div>
+            <div id="history"></div>      
+            <div id="pagination" class="pagination"></div>  
+            <div id="transaction-history">
+                <!-- Transaction history will be populated here -->
+            </div>
+            <div id="pagination">
+                <!-- Pagination controls will be populated here -->
+            </div>
+        </section>
+    </main>
+    <div id="address"></div>
+    <div id="balance"></div>
+    <div id="history"></div> <!-- Ensure this element exists -->
+    <div id="pagination"></div> <!-- Ensure this element exists for pagination -->
+    <footer>
+        <p>&copy; 2025 Blockchain Browser</p>
+    </footer>
+    <script src="scripts/address.js"></script>
+    <script src="scripts/search.js"></script>
+</body>
+</html>

@@ -1,0 +1,171 @@
+// This file contains JavaScript code to handle dynamic interactions on the blockchain browser website.
+
+document.addEventListener('DOMContentLoaded', async function() {
+    let apiUrl;
+    const blockchainNetwork = 'FAB'; // Change this value based on the selected blockchain network
+
+    try {
+        const response = await fetch('/config/environment.json');
+        const config = await response.json();
+        apiUrl = config.apiServers[blockchainNetwork];
+        if (!apiUrl) {
+            throw new Error(`API server not configured for ${blockchainNetwork}`);
+        }
+    } catch (error) {
+        console.error('Error loading configuration:', error);
+        return;
+    }
+
+    let currentBlockHeight = null;
+    let initialBlockHeight = null;
+    let isViewingLatestBlocks = true;
+
+    // Function to fetch blockchain data
+    async function fetchBlockchainData(endpoint) {
+        try {
+            const response = await fetch(apiUrl + endpoint);
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            const data = await response.json();
+            console.log(`Data fetched from ${endpoint}:`, data); // Debug statement
+            return data;
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        }
+    }
+
+    // Function to calculate elapsed time
+    function timeSince(date) {
+        const seconds = Math.floor((new Date() - date) / 1000);
+        let interval = Math.floor(seconds / 31536000);
+
+        if (interval > 1) {
+            return interval + " yr";
+        }
+        interval = Math.floor(seconds / 2592000);
+        if (interval > 1) {
+            return interval + " mon";
+        }
+        interval = Math.floor(seconds / 86400);
+        if (interval > 1) {
+            return interval + " day";
+        }
+        interval = Math.floor(seconds / 3600);
+        if (interval > 1) {
+            return interval + " hr";
+        }
+        interval = Math.floor(seconds / 60);
+        if (interval > 1) {
+            return interval + " min";
+        }
+        return Math.floor(seconds) + " sec";
+    }
+
+    // Function to load blocks
+    async function loadBlocks(startBlockHeight) {
+        const blocksTableBody = document.querySelector('#blocks-table tbody');
+        const newRows = [];
+
+        for (let i = 0; i < 20; i++) {
+            const blockHeight = startBlockHeight - i;
+            if (blockHeight < 1) break; // Ensure block height is not less than 1
+
+            const blockData = await fetchBlockchainData(`block/${blockHeight}`);
+            if (blockData) {
+                console.log(`Block data for block ${blockHeight}:`, blockData); // Debug statement
+                const row = document.createElement('tr');
+                const blockTime = new Date(blockData.time * 1000);
+                const now = new Date();
+                const timeDifference = now - blockTime;
+                const oneDay = 24 * 60 * 60 * 1000;
+
+                const formattedTime = timeDifference > oneDay
+                    ? blockTime.toLocaleString()
+                    : `${timeSince(blockTime)} ago`;
+
+                row.innerHTML = `
+                    <td><a href="block.html?blockNumber=${blockData.height}">${blockData.height.toLocaleString()}</a></td>
+                    <td>${formattedTime}</td>
+                    <td>${blockData.tx.length}</td>
+                    <td class="size">${blockData.size.toLocaleString()}</td>
+                `;
+                newRows.push(row);
+            }
+        }
+
+        // Update the table without flashing
+        blocksTableBody.innerHTML = '';
+        newRows.forEach(row => blocksTableBody.appendChild(row));
+
+        // Show or hide the "Prev" button based on the current block height
+        const prevButton = document.getElementById('prev-button');
+        if (currentBlockHeight >= initialBlockHeight) {
+            prevButton.style.display = 'none';
+        } else {
+            prevButton.style.display = 'inline-block';
+        }
+    }
+
+    // Function to load the latest 20 blocks
+    async function loadChainTip() {
+        const chaintip = await fetchBlockchainData('latest-block');
+        if (chaintip) {
+            console.log('Chaintip data:', chaintip); // Debug statement
+            currentBlockHeight = chaintip.blockNumber;
+            initialBlockHeight = chaintip.blockNumber;
+            loadBlocks(currentBlockHeight);
+            loadLatestTransactions();
+        }
+    }
+
+    // Function to load the latest transactions
+    async function loadLatestTransactions() {
+        const latestTransactions = await fetchBlockchainData('latest-transactions');
+        if (latestTransactions) {
+            console.log('Latest transactions:', latestTransactions); // Debug statement
+            const transactionsList = document.getElementById('transactions-list');
+            const newItems = [];
+
+            latestTransactions.forEach(transaction => {
+                const listItem = document.createElement('li');
+                listItem.innerHTML = `<a href="transaction.html?txid=${transaction.txid}">${transaction.txid}</a>`;
+                newItems.push(listItem);
+            });
+
+            // Update the list without flashing
+            transactionsList.innerHTML = '';
+            newItems.forEach(item => transactionsList.appendChild(item));
+        }
+    }
+
+    // Load the latest blocks on the homepage
+    if (document.querySelector('#blocks-table')) {
+        loadChainTip();
+    }
+
+    // Event listener for the "Next" button
+    document.getElementById('next-button').addEventListener('click', function() {
+        if (currentBlockHeight !== null) {
+            currentBlockHeight -= 20;
+            isViewingLatestBlocks = false;
+            loadBlocks(currentBlockHeight);
+        }
+    });
+
+    // Event listener for the "Prev" button
+    document.getElementById('prev-button').addEventListener('click', function() {
+        if (currentBlockHeight !== null && currentBlockHeight + 20 <= initialBlockHeight) {
+            currentBlockHeight += 20;
+            isViewingLatestBlocks = false;
+            loadBlocks(currentBlockHeight);
+        }
+    });
+
+    // Refresh the content every 5 seconds
+    setInterval(() => {
+        if (document.querySelector('#blocks-table') && isViewingLatestBlocks) {
+            loadChainTip();
+        }
+    }, 1000);
+});

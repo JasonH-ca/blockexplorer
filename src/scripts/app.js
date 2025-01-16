@@ -85,7 +85,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                     : `${timeSince(blockTime)} ago`;
 
                 row.innerHTML = `
-                    <td><a href="block.html?blockNumber=${blockData.height}">${blockData.height.toLocaleString()}</a></td>
+                    <td><a href="src/block.html?blockNumber=${blockData.height}">${blockData.height.toLocaleString()}</a></td>
                     <td>${formattedTime}</td>
                     <td>${blockData.tx.length}</td>
                     <td class="size">${blockData.size.toLocaleString()}</td>

@@ -3,7 +3,7 @@ document.addEventListener('DOMContentLoaded', async function() {
     const blockchainNetwork = 'FAB'; // Change this value based on the selected blockchain network
 
     try {
-        const response = await fetch('/config/environment.json');
+        const response = await fetch('./config/environment.json');
         const config = await response.json();
         apiUrl = config.apiServers[blockchainNetwork];
         if (!apiUrl) {

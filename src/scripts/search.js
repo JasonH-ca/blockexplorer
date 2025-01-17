@@ -1,9 +1,15 @@
 document.addEventListener('DOMContentLoaded', async function() {
     let apiUrl;
+    let root = true;
     const blockchainNetwork = 'FAB'; // Change this value based on the selected blockchain network
 
     try {
-        const response = await fetch('/config/environment.json');
+        let response = await fetch('./config/environment.json');
+        root = false;
+        if (!response.ok) {
+            root = true;
+            response = await fetch('./src/config/environment.json');
+        }
         const config = await response.json();
         apiUrl = config.apiServers[blockchainNetwork];
         if (!apiUrl) {
@@ -37,24 +43,25 @@ document.addEventListener('DOMContentLoaded', async function() {
         const performSearch = async () => {
             const query = searchField.value.trim();
             if (query) {
+                const prefix = root ? 'src/' : '';
                 if (/^\d+$/.test(query)) {
                     // Block number
-                    window.location.href = `block.html?blockNumber=${query}`;
+                    window.location.href = `${prefix}block.html?blockNumber=${query}`;
                 } else if (/^[a-fA-F0-9]{64}$/.test(query)) {
                     // Block hash or transaction hash
                     try {
                         const data = await fetchBlockchainData(`block/${query}`);
                         if (data) {
-                            window.location.href = `block.html?blockHash=${query}`;
+                            window.location.href = `${prefix}block.html?blockHash=${query}`;
                         } else {
-                            window.location.href = `transaction.html?txid=${query}`;
+                            window.location.href = `${prefix}transaction.html?txid=${query}`;
                         }
                     } catch {
-                        window.location.href = `transaction.html?txid=${query}`;
+                        window.location.href = `${prefix}transaction.html?txid=${query}`;
                     }
                 } else {
                     // Address
-                    window.location.href = `address.html?address=${query}`;
+                    window.location.href = `${prefix}address.html?address=${query}`;
                 }
             }
         };

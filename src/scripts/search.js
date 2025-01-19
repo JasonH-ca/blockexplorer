@@ -11,7 +11,8 @@ document.addEventListener('DOMContentLoaded', async function() {
             response = await fetch('./src/config/environment.json');
         }
         const config = await response.json();
-        apiUrl = config.apiServers[blockchainNetwork];
+        const environment = config.environment; // Get the current environment (debug or production)
+        apiUrl = config.apiServers[environment][blockchainNetwork];
         if (!apiUrl) {
             throw new Error(`API server not configured for ${blockchainNetwork}`);
         }

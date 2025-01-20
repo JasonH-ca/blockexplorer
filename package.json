@@ -9,9 +9,11 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "axios": "^0.21.1"
+    "axios": "^0.21.1",
+    "braces": ">=3.0.3"  
   },
   "devDependencies": {
-    "live-server": "^1.2.1"
+    "live-server": "^1.2.1",
+    "braces": ">=3.0.3"
   }
 }

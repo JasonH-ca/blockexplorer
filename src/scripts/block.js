@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded', async function() {
     // Function to fetch blockchain data
     async function fetchBlockchainData(endpoint) {
         try {
-            const response = await fetch(apiUrl + endpoint);
+            const response = await fetch(`${apiUrl}${blockchainNetwork}/${endpoint}`);
             if (!response.ok) {
                 throw new Error('Network response was not ok');
             }

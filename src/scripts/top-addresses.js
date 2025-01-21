@@ -119,7 +119,8 @@ document.addEventListener('DOMContentLoaded', async function() {
     });
 
     document.getElementById('logo-link').href = `../index.html?network=${blockchainNetwork}`;
-
+    document.getElementById('ticker').textContent = blockchainNetwork;
+    
     // Initialize the page by getting the total number of addresses and loading the first page
     const totalAddresses = await getTotalAddresses();
     totalPages = Math.ceil(totalAddresses / pageSize);

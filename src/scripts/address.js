@@ -104,7 +104,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                     if (vinAddress !== specificAddress) return ''; // Skip if address is different
                     return `
                         <div>
-                            <p>-${parseFloat(vinAmount).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 8 })} FAB</p>
+                            <p>-${parseFloat(vinAmount).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 8 })} ${blockchainNetwork}</p>
                         </div>
                     `;
                 });
@@ -118,7 +118,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                     if (voutAddress !== specificAddress) return ''; // Skip if address is different
                     return `
                         <div class="vout">
-                            <p>+${parseFloat(vout.value).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 8 })} FAB</p>
+                            <p>+${parseFloat(vout.value).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 8 })} ${blockchainNetwork}</p>
                         </div>
                     `;
                 }).join('');
@@ -173,6 +173,7 @@ document.addEventListener('DOMContentLoaded', async function() {
     }
 
     document.getElementById('logo-link').href = `../index.html?network=${blockchainNetwork}`;
+    document.getElementById('ticker').textContent = blockchainNetwork;
 
     // Call the function to load address details
     loadAddressDetails();

@@ -101,7 +101,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                         </tr>
                         <tr>
                             <th>Fee</th>
-                            <td>${transactionFee !== 'n/a' ? transactionFee.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 8 }) + ' FAB' : 'n/a'}</td>
+                            <td>${transactionFee !== 'n/a' ? transactionFee.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 8 }) + ` ${blockchainNetwork}` : 'n/a'}</td>
                         </tr>
                         <tr>
                             <th>Inputs</th>
@@ -112,7 +112,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                                         return `
                                             <li class="input-item">
                                                 Coinbase<br>
-                                                ${input.value ? `${parseFloat(input.value).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 8 })} FAB` : ''}
+                                                ${input.value ? `${parseFloat(input.value).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 8 })} ${blockchainNetwork}` : ''}
                                             </li>
                                         `;
                                     } else {
@@ -123,7 +123,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                                             <li class="input-item">
                                                 <a href="transaction.html?txid=${input.txid}&network=${blockchainNetwork}">${input.txid}</a><br>
                                                 <a href="address.html?address=${vinAddress}&network=${blockchainNetwork}">${vinAddress}</a><br>
-                                                ${vinAmount ? `${parseFloat(vinAmount).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 8 })} FAB` : ''}
+                                                ${vinAmount ? `${parseFloat(vinAmount).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 8 })} ${blockchainNetwork}` : ''}
                                             </li>
                                         `;
                                     }
@@ -138,7 +138,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                                     ${transactionData.vout.map(output => `
                                         <li class="output-item">
                                             ${output.scriptPubKey.addresses ? output.scriptPubKey.addresses.map(address => `<a href="address.html?address=${address}&network=${blockchainNetwork}">${address}</a>`).join(', ') : 'n/a'}<br>
-                                            ${output.value ? `${parseFloat(output.value).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 8 })} FAB` : ''}
+                                            ${output.value ? `${parseFloat(output.value).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 8 })} ${blockchainNetwork}` : ''}
                                         </li>
                                     `).join('')}
                                 </ul>

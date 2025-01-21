@@ -1,7 +1,8 @@
 document.addEventListener('DOMContentLoaded', async function() {
     let apiUrl;
     let root = true;
-    const blockchainNetwork = 'FAB'; // Change this value based on the selected blockchain network
+    const urlParams = new URLSearchParams(window.location.search);
+    const blockchainNetwork = urlParams.get('network') || 'FAB'; // Default to 'FAB' if not specified
 
     try {
         let response = await fetch('./config/environment.json');
@@ -29,7 +30,6 @@ document.addEventListener('DOMContentLoaded', async function() {
                 throw new Error('Network response was not ok');
             }
             const data = await response.json();
-            console.log(`Data fetched from ${endpoint}:`, data); // Debug statement
             return data;
         } catch (error) {
             console.error('Error fetching data:', error);
@@ -45,24 +45,25 @@ document.addEventListener('DOMContentLoaded', async function() {
             const query = searchField.value.trim();
             if (query) {
                 const prefix = root ? 'src/' : '';
+                const networkParam = `&network=${blockchainNetwork}`;
                 if (/^\d+$/.test(query)) {
                     // Block number
-                    window.location.href = `${prefix}block.html?blockNumber=${query}`;
+                    window.location.href = `${prefix}block.html?blockNumber=${query}${networkParam}`;
                 } else if (/^[a-fA-F0-9]{64}$/.test(query)) {
                     // Block hash or transaction hash
                     try {
                         const data = await fetchBlockchainData(`block/${query}`);
                         if (data) {
-                            window.location.href = `${prefix}block.html?blockHash=${query}`;
+                            window.location.href = `${prefix}block.html?blockHash=${query}${networkParam}`;
                         } else {
-                            window.location.href = `${prefix}transaction.html?txid=${query}`;
+                            window.location.href = `${prefix}transaction.html?txid=${query}${networkParam}`;
                         }
                     } catch {
-                        window.location.href = `${prefix}transaction.html?txid=${query}`;
+                        window.location.href = `${prefix}transaction.html?txid=${query}${networkParam}`;
                     }
                 } else {
                     // Address
-                    window.location.href = `${prefix}address.html?address=${query}`;
+                    window.location.href = `${prefix}address.html?address=${query}${networkParam}`;
                 }
             }
         };

@@ -1,19 +1,26 @@
 document.addEventListener('DOMContentLoaded', async function() {
-    let apiUrl;
-    const blockchainNetwork = 'FAB'; // Change this value based on the selected blockchain network
+    const urlParams = new URLSearchParams(window.location.search);
+    const blockchainNetwork = urlParams.get('network') || 'FAB'; // Default to 'FAB' if not specified
 
-    try {
-        const response = await fetch('./config/environment.json');
-        const config = await response.json();
-        const environment = config.environment; // Get the current environment (debug or production)
-        apiUrl = config.apiServers[environment][blockchainNetwork];
-        if (!apiUrl) {
-            throw new Error(`API server not configured for ${blockchainNetwork}`);
+    let apiUrl;
+
+    async function loadConfiguration() {
+        try {
+            const response = await fetch('./config/environment.json');
+            const config = await response.json();
+            const environment = config.environment; // Get the current environment (debug or production)
+            apiUrl = config.apiServers[environment][blockchainNetwork];
+            if (!apiUrl) {
+                throw new Error(`API server not configured for ${blockchainNetwork} in ${environment} environment`);
+            }
+        } catch (error) {
+            console.error('Error loading configuration:', error);
+            return;
         }
-    } catch (error) {
-        console.error('Error loading configuration:', error);
-        return;
     }
+
+    // Initial load
+    await loadConfiguration();
 
     let currentPage = 1;
     const pageSize = 20;
@@ -27,7 +34,6 @@ document.addEventListener('DOMContentLoaded', async function() {
                 throw new Error('Network response was not ok');
             }
             const data = await response.json();
-            console.log(`Data fetched from ${endpoint}:`, data); // Debug statement
             return data;
         } catch (error) {
             console.error('Error fetching data:', error);
@@ -44,11 +50,10 @@ document.addEventListener('DOMContentLoaded', async function() {
     async function loadTopAddresses(page = 1, pageSize = 20) {
         const topAddressesData = await fetchBlockchainData(`topaddresses?page=${page}&pageSize=${pageSize}`);
         if (topAddressesData) {
-            console.log('Top addresses data:', topAddressesData); // Debug statement
             const topAddressesTableBody = document.querySelector('#top-addresses-table tbody');
             topAddressesTableBody.innerHTML = topAddressesData.map(address => `
                 <tr>
-                    <td class="address"><a href="address.html?address=${address.address}">${address.address}</a></td>
+                    <td class="address"><a href="address.html?address=${address.address}&network=${blockchainNetwork}">${address.address}</a></td>
                     <td class="balance">${parseFloat(address.balance).toLocaleString('en-US', { minimumFractionDigits: 8, maximumFractionDigits: 8 })}</td>
                 </tr>
             `).join('');
@@ -112,6 +117,8 @@ document.addEventListener('DOMContentLoaded', async function() {
             document.getElementById('go-to-page').click();
         }
     });
+
+    document.getElementById('logo-link').href = `../index.html?network=${blockchainNetwork}`;
 
     // Initialize the page by getting the total number of addresses and loading the first page
     const totalAddresses = await getTotalAddresses();

@@ -9,21 +9,24 @@
 <body>
     <header>
         <div id="logo">
-            <a href="index.html">
+            <a id="logo-link" href="#">
                 <img src="src/assets/fab-logo-o.png" alt="Logo">
             </a>
         </div>
         <nav>
             <ul id="menu">
-                <li><a href="index.html">Home</a></li> <!-- Added Home menu item -->
+                <li><a id="home-link" href="#">Home</a></li>
                 <li class="dropdown">
-                    <a href="javascript:void(0)" class="dropbtn">Network &#9662;</a> <!-- Added down arrow symbol -->
+                    <a href="javascript:void(0)" class="dropbtn">Network &#9662;</a>
                     <div class="dropdown-content">
-                        <a href="src/network-status.html">FAB mainnet</a>
-                        <a href="src/network-nodes.html">FAB testnet</a>
+                        <a href="javascript:void(0)" data-network="FAB">FAB mainnet</a>
+                        <a href="javascript:void(0)" data-network="LTC">LTC mainnet</a>
+                        <a href="javascript:void(0)" data-network="DOGE">DOGE mainnet</a>
+                        <a href="javascript:void(0)" data-network="BCH">BCH mainnet</a>
+                        <a href="javascript:void(0)" data-network="FAB_TEST">FAB testnet</a>
                     </div>
                 </li>
-                <li><a href="src/top-addresses.html">Top Addresses</a></li> <!-- Added Top Addresses menu item -->
+                <li><a id="top-addresses-link" href="#">Top Addresses</a></li>
             </ul>
         </nav>
         <div id="search-container">

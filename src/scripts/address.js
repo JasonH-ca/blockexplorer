@@ -1,6 +1,7 @@
 document.addEventListener('DOMContentLoaded', async function() {
     let apiUrl;
-    const blockchainNetwork = 'FAB'; // Change this value based on the selected blockchain network
+    const urlParams = new URLSearchParams(window.location.search);
+    const blockchainNetwork = urlParams.get('network') || 'FAB'; // Default to 'FAB' if not specified
 
     try {
         const response = await fetch('./config/environment.json');
@@ -43,7 +44,6 @@ document.addEventListener('DOMContentLoaded', async function() {
             try {
                 // Fetch balance
                 const balanceData = await fetchBlockchainData(`balance/${address}`);
-                console.log('Balance data:', balanceData); // Debug statement
                 if (balanceData !== null) {
                     document.getElementById('balance').textContent = parseFloat(balanceData.balance).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 8 });
                 } else {
@@ -126,7 +126,7 @@ document.addEventListener('DOMContentLoaded', async function() {
             row.innerHTML = `
                 <td class="transaction-cell">
                     <div class="transaction-header">
-                        <span><a href="transaction.html?txid=${item.txHash}">${item.txHash}</a></span>
+                        <span><a href="transaction.html?txid=${item.txHash}&network=${blockchainNetwork}">${item.txHash}</a></span>
                         <span>${transactionTime}</span>
                     </div>
                     <div class="confirmations">
@@ -171,6 +171,8 @@ document.addEventListener('DOMContentLoaded', async function() {
         nextButton.addEventListener('click', () => loadAddressDetails(currentPage + 1, pageSize));
         paginationContainer.appendChild(nextButton);
     }
+
+    document.getElementById('logo-link').href = `../index.html?network=${blockchainNetwork}`;
 
     // Call the function to load address details
     loadAddressDetails();

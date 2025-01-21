@@ -1,6 +1,8 @@
 document.addEventListener('DOMContentLoaded', async function() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const blockchainNetwork = urlParams.get('network') || 'FAB'; // Default to 'FAB' if not specified
+
     let apiUrl;
-    const blockchainNetwork = 'FAB'; // Change this value based on the selected blockchain network
 
     try {
         const response = await fetch('./config/environment.json');
@@ -23,7 +25,6 @@ document.addEventListener('DOMContentLoaded', async function() {
                 throw new Error('Network response was not ok');
             }
             const data = await response.json();
-            console.log(`Data fetched from ${endpoint}:`, data); // Debug statement
             return data;
         } catch (error) {
             console.error('Error fetching data:', error);
@@ -48,7 +49,6 @@ document.addEventListener('DOMContentLoaded', async function() {
         if (txid) {
             const transactionData = await fetchBlockchainData(`transaction/${txid}`);
             if (transactionData) {
-                console.log('Transaction data:', transactionData); // Debug statement
                 const blockData = await fetchBlockchainData(`block/${transactionData.blockhash}`);
                 const blockHeight = blockData ? blockData.height : 'Unknown';
 
@@ -89,7 +89,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                         </tr>
                         <tr>
                             <th>Height</th>
-                            <td><a href="block.html?blockNumber=${blockHeight}">${blockHeight.toLocaleString()}</a></td>
+                            <td><a href="block.html?blockNumber=${blockHeight}&network=${blockchainNetwork}">${blockHeight.toLocaleString()}</a></td>
                         </tr>
                         <tr>
                             <th>Time</th>
@@ -121,8 +121,8 @@ document.addEventListener('DOMContentLoaded', async function() {
                                         const vinAmount = vinDetails.vout[input.vout].value;
                                         return `
                                             <li class="input-item">
-                                                <a href="transaction.html?txid=${input.txid}">${input.txid}</a><br>
-                                                <a href="address.html?address=${vinAddress}">${vinAddress}</a><br>
+                                                <a href="transaction.html?txid=${input.txid}&network=${blockchainNetwork}">${input.txid}</a><br>
+                                                <a href="address.html?address=${vinAddress}&network=${blockchainNetwork}">${vinAddress}</a><br>
                                                 ${vinAmount ? `${parseFloat(vinAmount).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 8 })} FAB` : ''}
                                             </li>
                                         `;
@@ -137,7 +137,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                                 <ul class="no-bullets">
                                     ${transactionData.vout.map(output => `
                                         <li class="output-item">
-                                            ${output.scriptPubKey.addresses ? output.scriptPubKey.addresses.map(address => `<a href="address.html?address=${address}">${address}</a>`).join(', ') : 'n/a'}<br>
+                                            ${output.scriptPubKey.addresses ? output.scriptPubKey.addresses.map(address => `<a href="address.html?address=${address}&network=${blockchainNetwork}">${address}</a>`).join(', ') : 'n/a'}<br>
                                             ${output.value ? `${parseFloat(output.value).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 8 })} FAB` : ''}
                                         </li>
                                     `).join('')}
@@ -164,6 +164,8 @@ document.addEventListener('DOMContentLoaded', async function() {
             }
         }
     }
+
+    document.getElementById('logo-link').href = `../index.html?network=${blockchainNetwork}`;
 
     // Load transaction details on the transaction detail page
     loadTransactionDetails();

@@ -1,6 +1,8 @@
 document.addEventListener('DOMContentLoaded', async function() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const blockchainNetwork = urlParams.get('network') || 'FAB'; // Default to 'FAB' if not specified
+
     let apiUrl;
-    const blockchainNetwork = 'FAB'; // Change this value based on the selected blockchain network
 
     try {
         const response = await fetch('./config/environment.json');
@@ -23,7 +25,6 @@ document.addEventListener('DOMContentLoaded', async function() {
                 throw new Error('Network response was not ok');
             }
             const data = await response.json();
-            console.log(`Data fetched from ${endpoint}:`, data); // Debug statement
             return data;
         } catch (error) {
             console.error('Error fetching data:', error);
@@ -49,14 +50,13 @@ document.addEventListener('DOMContentLoaded', async function() {
         }
 
         if (blockData) {
-            console.log('Block data:', blockData); // Debug statement
             const blockInfoDiv = document.getElementById('block-info');
             const previousBlockExists = blockData.height > 0;
             const nextBlockExists = await fetchBlockchainData(`block/${blockData.height + 1}`);
             blockInfoDiv.innerHTML = `
                 <div id="block-navigation">
-                    ${previousBlockExists ? `<a href="block.html?blockNumber=${blockData.height - 1}">${(blockData.height - 1).toLocaleString()}</a>` : ''} |
-                    ${nextBlockExists ? `<a href="block.html?blockNumber=${blockData.height + 1}">${(blockData.height + 1).toLocaleString()}</a>` : ''}
+                    ${previousBlockExists ? `<a href="block.html?blockNumber=${blockData.height - 1}&network=${blockchainNetwork}">${(blockData.height - 1).toLocaleString()}</a>` : ''} |
+                    ${nextBlockExists ? `<a href="block.html?blockNumber=${blockData.height + 1}&network=${blockchainNetwork}">${(blockData.height + 1).toLocaleString()}</a>` : ''}
                 </div>
                 <table id="block-info-table">
                     <tr>
@@ -95,7 +95,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                 </table>
                 <h3>Transactions</h3>
                 <ul id="transaction-list">
-                    ${blockData.tx.map(txid => `<li><a href="transaction.html?txid=${txid}">${txid}</a></li>`).join('')}
+                    ${blockData.tx.map(txid => `<li><a href="transaction.html?txid=${txid}&network=${blockchainNetwork}">${txid}</a></li>`).join('')}
                 </ul>
             `;
 
@@ -111,6 +111,8 @@ document.addEventListener('DOMContentLoaded', async function() {
             console.error('Failed to load block data');
         }
     }
+
+    document.getElementById('logo-link').href = `../index.html?network=${blockchainNetwork}`;
 
     // Load block details on the block detail page
     loadBlockDetails();

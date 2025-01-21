@@ -1,21 +1,46 @@
 // This file contains JavaScript code to handle dynamic interactions on the blockchain browser website.
 
 document.addEventListener('DOMContentLoaded', async function() {
+    const urlParams = new URLSearchParams(window.location.search);
+    let blockchainNetwork = urlParams.get('network') || 'FAB'; // Default to 'FAB' if not specified
     let apiUrl;
-    const blockchainNetwork = 'FAB'; // Change this value based on the selected blockchain network
 
-    try {
-        const response = await fetch('./src/config/environment.json');
-        const config = await response.json();
-        const environment = config.environment; // Get the current environment (debug or production)
-        apiUrl = config.apiServers[environment][blockchainNetwork];
-        if (!apiUrl) {
-            throw new Error(`API server not configured for ${blockchainNetwork}`);
-        }
-    } catch (error) {
-        console.error('Error loading configuration:', error);
-        return;
+    // Function to set the network based on dropdown selection
+    function setNetwork(network) {
+        console.log('Network selected:', network);
+        blockchainNetwork = network;
+        loadConfiguration()
     }
+
+    // Add event listeners to dropdown items
+    document.querySelectorAll('.dropdown-content a').forEach(item => {
+        item.addEventListener('click', event => {
+            const selectedNetwork = event.target.getAttribute('data-network');
+            if (['DOGE', 'BCH', 'FAB_TEST'].includes(selectedNetwork)) {
+                alert(`${selectedNetwork} is not supported.`);
+            } else {
+                setNetwork(selectedNetwork);
+            }
+        });    
+    });
+
+    async function loadConfiguration() {
+        try {
+            const response = await fetch('./src/config/environment.json');
+            const config = await response.json();
+            const environment = config.environment; // Get the current environment (debug or production)
+            apiUrl = config.apiServers[environment][blockchainNetwork];
+            if (!apiUrl) {
+                throw new Error(`API server not configured for ${blockchainNetwork} in ${environment} environment`);
+            }
+        } catch (error) {
+            console.error('Error loading configuration:', error);
+            return;
+        }
+    }
+
+    // Initial load
+    await loadConfiguration();
 
     let currentBlockHeight = null;
     let initialBlockHeight = null;
@@ -29,7 +54,6 @@ document.addEventListener('DOMContentLoaded', async function() {
                 throw new Error('Network response was not ok');
             }
             const data = await response.json();
-            console.log(`Data fetched from ${endpoint}:`, data); // Debug statement
             return data;
         } catch (error) {
             console.error('Error fetching data:', error);
@@ -74,7 +98,6 @@ document.addEventListener('DOMContentLoaded', async function() {
 
             const blockData = await fetchBlockchainData(`block/${blockHeight}`);
             if (blockData) {
-                console.log(`Block data for block ${blockHeight}:`, blockData); // Debug statement
                 const row = document.createElement('tr');
                 const blockTime = new Date(blockData.time * 1000);
                 const now = new Date();
@@ -86,7 +109,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                     : `${timeSince(blockTime)} ago`;
 
                 row.innerHTML = `
-                    <td><a href="src/block.html?blockNumber=${blockData.height}">${blockData.height.toLocaleString()}</a></td>
+                    <td><a href="src/block.html?blockNumber=${blockData.height}&network=${blockchainNetwork}">${blockData.height.toLocaleString()}</a></td>
                     <td>${formattedTime}</td>
                     <td>${blockData.tx.length}</td>
                     <td class="size">${blockData.size.toLocaleString()}</td>
@@ -112,7 +135,6 @@ document.addEventListener('DOMContentLoaded', async function() {
     async function loadChainTip() {
         const chaintip = await fetchBlockchainData('latest-block');
         if (chaintip) {
-            console.log('Chaintip data:', chaintip); // Debug statement
             currentBlockHeight = chaintip.blockNumber;
             initialBlockHeight = chaintip.blockNumber;
             loadBlocks(currentBlockHeight);
@@ -124,13 +146,12 @@ document.addEventListener('DOMContentLoaded', async function() {
     async function loadLatestTransactions() {
         const latestTransactions = await fetchBlockchainData('latest-transactions');
         if (latestTransactions) {
-            console.log('Latest transactions:', latestTransactions); // Debug statement
             const transactionsList = document.getElementById('transactions-list');
             const newItems = [];
 
             latestTransactions.forEach(transaction => {
                 const listItem = document.createElement('li');
-                listItem.innerHTML = `<a href="transaction.html?txid=${transaction.txid}">${transaction.txid}</a>`;
+                listItem.innerHTML = `<a href="transaction.html?txid=${transaction.txid}&network=${blockchainNetwork}">${transaction.txid}</a>`;
                 newItems.push(listItem);
             });
 
@@ -169,4 +190,9 @@ document.addEventListener('DOMContentLoaded', async function() {
             loadChainTip();
         }
     }, 1000);
+
+    // Update the href attributes in the HTML
+    document.getElementById('logo-link').href = `index.html?network=${blockchainNetwork}`;
+    document.getElementById('home-link').href = `index.html?network=${blockchainNetwork}`;
+    document.getElementById('top-addresses-link').href = `src/top-addresses.html?network=${blockchainNetwork}`;
 });

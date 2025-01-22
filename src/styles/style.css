@@ -9,9 +9,10 @@ header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background:#007bff;
+    background: #007bff;
     color: #ffffff;
     padding: 10px 20px;
+    position: relative;
 }
 
 #logo {
@@ -33,7 +34,7 @@ nav {
     margin: 0;
     padding: 0;
     width: auto; /* Set the width of the menu to 20% */
-    background-color:#007bff;
+    background-color: #007bff;
 }
 
 #menu li {
@@ -44,15 +45,15 @@ nav {
 }
 
 #menu li a {
-    color: #ffffff;
-    background-color:#007bff;
+    color: #ffffff; /* Menu item text color */
+    background-color: #007bff; /* Menu item background color */
     text-decoration: none;
     font-weight: bold;
     padding: 20px 2px 10px; /* Add padding to menu items */
 }
 
 #menu li a:hover {
-    text-decoration: underline;
+    text-decoration: underline; /* Underline text on hover */
 }
 
 .dropdown {
@@ -60,8 +61,8 @@ nav {
 }
 
 .dropbtn {
-    background-color:#007bff;
-    color: white;
+    background-color: #007bff; /* Dropdown button background color */
+    color: white; /* Dropdown button text color */
     padding: 10px 10px;
     font-size: 16px;
     border: none;
@@ -71,23 +72,25 @@ nav {
 .dropdown-content {
     display: none;
     position: absolute;
-    background-color: #007bff;
+    background-color: #007bff; /* Dropdown menu background color */
+    color: #007b00; /* Dropdown menu item text color on hover */
     min-width: 200px;
     box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-    z-index: 1;    
+    z-index: 1;
     text-align: left;
 }
 
 .dropdown-content a {
-    color: black; /* Set text color to black */
+    color: #007b00; /* Dropdown menu item text color on hover */
+    background-color: #007bff; /* Dropdown menu item background color on hover */
     padding: 12px 50px;
     text-decoration: none;
     display: block;
 }
 
 .dropdown-content a:hover {
-    color: #007bff;
-    background-color: #007bff;
+    color: #007bff; /* Dropdown menu item text color on hover */
+    background-color: #007bff; /* Dropdown menu item background color on hover */
 }
 
 .dropdown:hover .dropdown-content {
@@ -97,12 +100,15 @@ nav {
 #search-container {
     display: flex;
     align-items: center;
+    min-width: 60%;
 }
 
 #search-field {
     padding: 5px;
     font-size: 16px;
-    width: 600px; /* Adjust the width to make the search field longer */
+    flex-grow: 1;
+    min-width: 2px; /* Set the minimum width */
+    max-width: 100%; /* Optional: Set the maximum width */
 }
 
 #search-button {
@@ -113,6 +119,9 @@ nav {
     color: #007bff;
     border: none;
     cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 #search-button:hover {
@@ -134,7 +143,7 @@ main {
 footer {
     text-align: center;
     padding: 10px;
-    background:#007bff;
+    background: #007bff;
     color: #ffffff;
 }
 
@@ -256,7 +265,7 @@ nav ul li a {
 }
 
 #blocks-table {
-    width: 50%;
+    width: 400px;
     border-collapse: collapse;
     margin-bottom: 20px;
 }
@@ -612,3 +621,31 @@ nav ul li a {
     width: 80px; /* Adjust the width as needed */
     text-align: center; /* Center the text inside the input */
 }
+
+/* Existing styles... */
+
+/* When the screen width is enough, put search at the right of the menu */
+@media (min-width: 850px) {
+    nav {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    #search-container {
+        margin-top: 0;
+    }
+}
+
+/* When the screen width is narrow, put search below the menu */
+@media (max-width: 849px) {
+    nav {
+        display: flex;
+        flex-direction: column;
+    }
+    #search-container {
+        display: flex;        
+        margin-left: 12px;
+        margin-top: 10px;
+    }
+}
+

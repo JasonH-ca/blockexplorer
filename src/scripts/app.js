@@ -193,6 +193,5 @@ document.addEventListener('DOMContentLoaded', async function() {
 
     // Update the href attributes in the HTML
     document.getElementById('logo-link').href = `index.html?network=${blockchainNetwork}`;
-    document.getElementById('home-link').href = `index.html?network=${blockchainNetwork}`;
     document.getElementById('top-addresses-link').href = `src/top-addresses.html?network=${blockchainNetwork}`;
 });

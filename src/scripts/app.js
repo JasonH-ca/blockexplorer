@@ -20,6 +20,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                 alert(`${selectedNetwork} is not supported.`);
             } else {
                 setNetwork(selectedNetwork);
+                updateLinks();
             }
         });    
     });
@@ -192,6 +193,11 @@ document.addEventListener('DOMContentLoaded', async function() {
     }, 1000);
 
     // Update the href attributes in the HTML
-    document.getElementById('logo-link').href = `index.html?network=${blockchainNetwork}`;
-    document.getElementById('top-addresses-link').href = `src/top-addresses.html?network=${blockchainNetwork}`;
+    function updateLinks() {
+        document.getElementById('logo-link').href = `index.html?network=${blockchainNetwork}`;
+        document.getElementById('top-addresses-link').href = `src/top-addresses.html?network=${blockchainNetwork}`;
+    }
+
+    // Initial link update
+    updateLinks();
 });

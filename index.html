@@ -62,13 +62,15 @@
     <script src="src/scripts/app.js"></script>
     <script src="src/scripts/search.js"></script>
     <script>
-        document.getElementById('hamburger').addEventListener('click', function() {
-            var menu = document.getElementById('menu');
-            if (menu.style.display === 'block' || menu.style.display === '') {
-                menu.style.display = 'none';
-            } else {
-                menu.style.display = 'block';
-            }
+        document.querySelectorAll('.dropdown-content a').forEach(item => {
+        item.addEventListener('click', () => {
+            item.parentElement.style.display = 'none';
+        });
+        });
+
+        document.querySelector('.dropbtn').addEventListener('click', () => {
+            const dropdownContent = document.querySelector('.dropdown-content');
+            dropdownContent.style.display = dropdownContent.style.display === 'block' ? 'none' : 'block';
         });
     </script>
 </body>

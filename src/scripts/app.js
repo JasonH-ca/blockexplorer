@@ -16,7 +16,7 @@ document.addEventListener('DOMContentLoaded', async function() {
     document.querySelectorAll('.dropdown-content a').forEach(item => {
         item.addEventListener('click', event => {
             const selectedNetwork = event.target.getAttribute('data-network');
-            if (['DOGE', 'BCH', 'FAB_TEST'].includes(selectedNetwork)) {
+            if (['DOGE', 'BCH'].includes(selectedNetwork)) {
                 alert(`${selectedNetwork} is not supported.`);
             } else {
                 setNetwork(selectedNetwork);

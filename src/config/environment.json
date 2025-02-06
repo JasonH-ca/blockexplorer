@@ -3,6 +3,7 @@
     "apiServers": {
         "production": {
             "FAB": "https://api.gotrust.me:3000/",
+            "FABTEST": "https://api.gotrust.me:3000/",
             "LTC": "https://api.gotrust.me:3000/",
             "DOGE": "https://api.gotrust.me:3000/",
             "BCH": "https://api.gotrust.me:3000/",

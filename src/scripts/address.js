@@ -2,6 +2,7 @@ document.addEventListener('DOMContentLoaded', async function() {
     let apiUrl;
     const urlParams = new URLSearchParams(window.location.search);
     const blockchainNetwork = urlParams.get('network') || 'FAB'; // Default to 'FAB' if not specified
+    let ticker;
 
     try {
         const response = await fetch('./config/environment.json');
@@ -12,6 +13,11 @@ document.addEventListener('DOMContentLoaded', async function() {
             throw new Error(`API server not configured for ${blockchainNetwork}`);
         }
         updateLogo(blockchainNetwork);
+        if (blockchainNetwork.endsWith("TEST")) {
+            ticker = blockchainNetwork.slice(0, -4);
+        } else {
+            ticker = blockchainNetwork;
+        }
     } catch (error) {
         console.error('Error loading configuration:', error);
         return;
@@ -130,7 +136,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                     if (vinAddress !== specificAddress) return ''; // Skip if address is different
                     return `
                         <div>
-                            <p>-${parseFloat(vinAmount).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 8 })} ${blockchainNetwork}</p>
+                            <p>-${parseFloat(vinAmount).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 8 })} ${ticker}</p>
                         </div>
                     `;
                 });
@@ -144,7 +150,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                     if (voutAddress !== specificAddress) return ''; // Skip if address is different
                     return `
                         <div class="vout">
-                            <p>+${parseFloat(vout.value).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 8 })} ${blockchainNetwork}</p>
+                            <p>+${parseFloat(vout.value).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 8 })} ${ticker}</p>
                         </div>
                     `;
                 }).join('');
@@ -199,7 +205,7 @@ document.addEventListener('DOMContentLoaded', async function() {
     }
 
     document.getElementById('logo-link').href = `../index.html?network=${blockchainNetwork}`;
-    document.getElementById('ticker').textContent = blockchainNetwork;
+    document.getElementById('ticker').textContent = ticker;
 
     // Call the function to load address details
     loadAddressDetails();

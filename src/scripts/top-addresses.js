@@ -1,6 +1,7 @@
 document.addEventListener('DOMContentLoaded', async function() {
     const urlParams = new URLSearchParams(window.location.search);
     const blockchainNetwork = urlParams.get('network') || 'FAB'; // Default to 'FAB' if not specified
+    let ticker;
 
     let apiUrl;
 
@@ -14,6 +15,11 @@ document.addEventListener('DOMContentLoaded', async function() {
                 throw new Error(`API server not configured for ${blockchainNetwork} in ${environment} environment`);
             }
             updateLogo(blockchainNetwork)
+            if (blockchainNetwork.endsWith("TEST")) {
+                ticker = blockchainNetwork.slice(0, -4);
+            } else {
+                ticker = blockchainNetwork;
+            }
         } catch (error) {
             console.error('Error loading configuration:', error);
             return;
@@ -143,7 +149,7 @@ document.addEventListener('DOMContentLoaded', async function() {
     });
 
     document.getElementById('logo-link').href = `../index.html?network=${blockchainNetwork}`;
-    document.getElementById('ticker').textContent = blockchainNetwork;
+    document.getElementById('ticker').textContent = ticker;
     
     // Initialize the page by getting the total number of addresses and loading the first page
     const totalAddresses = await getTotalAddresses();

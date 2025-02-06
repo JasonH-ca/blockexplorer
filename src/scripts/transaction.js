@@ -1,6 +1,7 @@
 document.addEventListener('DOMContentLoaded', async function() {
     const urlParams = new URLSearchParams(window.location.search);
     const blockchainNetwork = urlParams.get('network') || 'FAB'; // Default to 'FAB' if not specified
+    let ticker;
 
     let apiUrl;
 
@@ -13,6 +14,11 @@ document.addEventListener('DOMContentLoaded', async function() {
             throw new Error(`API server not configured for ${blockchainNetwork}`);
         }
         updateLogo(blockchainNetwork);
+        if (blockchainNetwork.endsWith("TEST")) {
+            ticker = blockchainNetwork.slice(0, -4);
+        } else {
+            ticker = blockchainNetwork;
+        }
     } catch (error) {
         console.error('Error loading configuration:', error);
         return;
@@ -126,7 +132,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                         </tr>
                         <tr>
                             <th>Fee</th>
-                            <td>${transactionFee !== 'n/a' ? transactionFee.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 8 }) + ` ${blockchainNetwork}` : 'n/a'}</td>
+                            <td>${transactionFee !== 'n/a' ? transactionFee.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 8 }) + ` ${ticker}` : 'n/a'}</td>
                         </tr>
                         <tr>
                             <th>Inputs</th>
@@ -137,7 +143,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                                         return `
                                             <li class="input-item">
                                                 Coinbase<br>
-                                                ${input.value ? `${parseFloat(input.value).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 8 })} ${blockchainNetwork}` : ''}
+                                                ${input.value ? `${parseFloat(input.value).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 8 })} ${ticker}` : ''}
                                             </li>
                                         `;
                                     } else {
@@ -148,7 +154,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                                             <li class="input-item">
                                                 <a href="transaction.html?txid=${input.txid}&network=${blockchainNetwork}">${input.txid}</a><br>
                                                 <a href="address.html?address=${vinAddress}&network=${blockchainNetwork}">${vinAddress}</a><br>
-                                                ${vinAmount ? `${parseFloat(vinAmount).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 8 })} ${blockchainNetwork}` : ''}
+                                                ${vinAmount ? `${parseFloat(vinAmount).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 8 })} ${ticker}` : ''}
                                             </li>
                                         `;
                                     }
@@ -163,7 +169,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                                     ${transactionData.vout.map(output => `
                                         <li class="output-item">
                                             ${output.scriptPubKey.addresses ? output.scriptPubKey.addresses.map(address => `<a href="address.html?address=${address}&network=${blockchainNetwork}">${address}</a>`).join(', ') : 'n/a'}<br>
-                                            ${output.value ? `${parseFloat(output.value).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 8 })} ${blockchainNetwork}` : ''}
+                                            ${output.value ? `${parseFloat(output.value).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 8 })} ${ticker}` : ''}
                                         </li>
                                     `).join('')}
                                 </ul>

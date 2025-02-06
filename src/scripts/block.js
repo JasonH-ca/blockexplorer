@@ -1,6 +1,7 @@
 document.addEventListener('DOMContentLoaded', async function() {
     const urlParams = new URLSearchParams(window.location.search);
     const blockchainNetwork = urlParams.get('network') || 'FAB'; // Default to 'FAB' if not specified
+    let ticker;
 
     let apiUrl;
 
@@ -13,6 +14,11 @@ document.addEventListener('DOMContentLoaded', async function() {
             throw new Error(`API server not configured for ${blockchainNetwork}`);
         }
         updateLogo(blockchainNetwork);
+        if (blockchainNetwork.endsWith("TEST")) {
+            ticker = blockchainNetwork.slice(0, -4);
+        } else {
+            ticker = blockchainNetwork;
+        }
     } catch (error) {
         console.error('Error loading configuration:', error);
         return;

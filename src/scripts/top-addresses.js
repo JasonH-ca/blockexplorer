@@ -13,6 +13,7 @@ document.addEventListener('DOMContentLoaded', async function() {
             if (!apiUrl) {
                 throw new Error(`API server not configured for ${blockchainNetwork} in ${environment} environment`);
             }
+            updateLogo(blockchainNetwork)
         } catch (error) {
             console.error('Error loading configuration:', error);
             return;
@@ -21,6 +22,29 @@ document.addEventListener('DOMContentLoaded', async function() {
 
     // Initial load
     await loadConfiguration();
+    // Function to update the logo based on the selected network
+    function updateLogo(network) {
+        const logoImg = document.getElementById('logo-img');
+        switch (network) {
+            case 'FAB':
+                logoImg.src = 'assets/fab-logo-o.png';
+                break;
+            case 'LTC':
+                logoImg.src = 'assets/ltc-logo.png';
+                break;
+            case 'DOGE':
+                logoImg.src = 'assets/doge-logo.png';
+                break;
+            case 'BCH':
+                logoImg.src = 'assets/bch-logo.png';
+                break;
+            case 'FABTEST':
+                logoImg.src = 'assets/fab-logo-t.png';
+                break;
+            default:
+                logoImg.src = 'assets/fab-logo-o.png';
+        }
+    }
 
     let currentPage = 1;
     const pageSize = 20;

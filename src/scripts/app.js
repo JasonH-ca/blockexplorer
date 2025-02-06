@@ -9,7 +9,8 @@ document.addEventListener('DOMContentLoaded', async function() {
     function setNetwork(network) {
         console.log('Network selected:', network);
         blockchainNetwork = network;
-        loadConfiguration()
+        loadConfiguration();
+        updateLogo(network);
     }
 
     // Add event listeners to dropdown items
@@ -40,8 +41,33 @@ document.addEventListener('DOMContentLoaded', async function() {
         }
     }
 
+    // Function to update the logo based on the selected network
+    function updateLogo(network) {
+        const logoImg = document.getElementById('logo-img');
+        switch (network) {
+            case 'FAB':
+                logoImg.src = 'src/assets/fab-logo-o.png';
+                break;
+            case 'LTC':
+                logoImg.src = 'src/assets/ltc-logo.png';
+                break;
+            case 'DOGE':
+                logoImg.src = 'src/assets/doge-logo.png';
+                break;
+            case 'BCH':
+                logoImg.src = 'src/assets/bch-logo.png';
+                break;
+            case 'FABTEST':
+                logoImg.src = 'src/assets/fab-logo-t.png';
+                break;
+            default:
+                logoImg.src = 'src/assets/fab-logo-o.png';
+        }
+    }
+
     // Initial load
     await loadConfiguration();
+    updateLogo(blockchainNetwork);
 
     let currentBlockHeight = null;
     let initialBlockHeight = null;

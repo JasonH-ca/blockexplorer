@@ -12,11 +12,36 @@ document.addEventListener('DOMContentLoaded', async function() {
         if (!apiUrl) {
             throw new Error(`API server not configured for ${blockchainNetwork}`);
         }
+        updateLogo(blockchainNetwork);
     } catch (error) {
         console.error('Error loading configuration:', error);
         return;
     }
 
+    // Function to update the logo based on the selected network
+    function updateLogo(network) {
+        const logoImg = document.getElementById('logo-img');
+        switch (network) {
+            case 'FAB':
+                logoImg.src = 'assets/fab-logo-o.png';
+                break;
+            case 'LTC':
+                logoImg.src = 'assets/ltc-logo.png';
+                break;
+            case 'DOGE':
+                logoImg.src = 'assets/doge-logo.png';
+                break;
+            case 'BCH':
+                logoImg.src = 'assets/bch-logo.png';
+                break;
+            case 'FABTEST':
+                logoImg.src = 'assets/fab-logo-t.png';
+                break;
+            default:
+                logoImg.src = 'assets/fab-logo-o.png';
+        }
+    }
+    
     // Function to fetch blockchain data
     async function fetchBlockchainData(endpoint) {
         try {

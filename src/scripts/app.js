@@ -17,12 +17,8 @@ document.addEventListener('DOMContentLoaded', async function() {
     document.querySelectorAll('.dropdown-content a').forEach(item => {
         item.addEventListener('click', event => {
             const selectedNetwork = event.target.getAttribute('data-network');
-            if (['DOGE', 'BCH'].includes(selectedNetwork)) {
-                alert(`${selectedNetwork} is not supported.`);
-            } else {
-                setNetwork(selectedNetwork);
-                updateLinks();
-            }
+            setNetwork(selectedNetwork);
+            updateLinks();
         });    
     });
 

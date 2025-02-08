@@ -81,12 +81,18 @@ document.addEventListener('DOMContentLoaded', async function() {
         const topAddressesData = await fetchBlockchainData(`topaddresses?page=${page}&pageSize=${pageSize}`);
         if (topAddressesData) {
             const topAddressesTableBody = document.querySelector('#top-addresses-table tbody');
-            topAddressesTableBody.innerHTML = topAddressesData.map(address => `
+            topAddressesTableBody.innerHTML = topAddressesData.map(address => {
+                let addressTypeHtml = '';
+                if (address.type && address.type !== '') {
+                    addressTypeHtml = `<span class="address-type">${address.type ? ` ${address.type}` : ''}</span>`;
+                }
+                return `
                 <tr>
-                    <td class="address"><a href="address.html?address=${address.address}&network=${blockchainNetwork}">${address.address}</a></td>
+                    <td class="address"><a href="address.html?address=${address.address}&network=${blockchainNetwork}">${address.address}</a>${addressTypeHtml}</td>
                     <td class="balance">${parseFloat(address.balance).toLocaleString('en-US', { minimumFractionDigits: 8, maximumFractionDigits: 8 })}</td>
                 </tr>
-            `).join('');
+            `;
+            }).join('');
             updatePaginationControls(page, topAddressesData.length, pageSize);
         }
     }

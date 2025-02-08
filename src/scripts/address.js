@@ -77,6 +77,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                 const balanceData = await fetchBlockchainData(`balance/${address}`);
                 if (balanceData !== null) {
                     document.getElementById('balance').textContent = parseFloat(balanceData.balance).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 8 });
+                    const addressTypeElement = document.getElementById('address-type'); // Define addressTypeElement
                     if ( !balanceData.type || balanceData.type === '') {
                         addressTypeElement.classList.add('hidden');
                     } else {

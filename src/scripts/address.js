@@ -46,8 +46,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                 logoImg.src = 'assets/fab-logo-o.png';
         }
     }
-    
-    // Other existing code in address.js
+
     // Function to fetch blockchain data
     async function fetchBlockchainData(endpoint) {
         try {
@@ -78,6 +77,12 @@ document.addEventListener('DOMContentLoaded', async function() {
                 const balanceData = await fetchBlockchainData(`balance/${address}`);
                 if (balanceData !== null) {
                     document.getElementById('balance').textContent = parseFloat(balanceData.balance).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 8 });
+                    if ( !balanceData.type || balanceData.type === '') {
+                        addressTypeElement.classList.add('hidden');
+                    } else {
+                        addressTypeElement.classList.remove('hidden');
+                        document.getElementById('address-type').textContent = balanceData.type;
+                    }
                 } else {
                     document.getElementById('balance').textContent = 'Not found';
                 }

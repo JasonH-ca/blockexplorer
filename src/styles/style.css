@@ -649,3 +649,16 @@ nav ul li a {
     }
 }
 
+.address-type {
+    display: inline-block;
+    padding: 2px 5px;
+    margin-left: 10px;
+    border: 1px solid grey;
+    border-radius: 5px;
+    color: grey;
+    background-color: #f0f0f0;
+}
+.hidden {
+    display: none;
+}
+

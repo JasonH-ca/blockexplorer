@@ -96,10 +96,10 @@ document.addEventListener('DOMContentLoaded', async function() {
                             const vinDetails = await fetchBlockchainData(`transaction/${input.txid}`);
                             return vinDetails.vout[input.vout].value;
                         }
-                    })).then(values => values.reduce((acc, val) => acc + val, 0));
+                    })).then(values => values.reduce((acc, val) => acc + parseFloat(val), 0));
 
                     // Calculate total output value
-                    const totalOutputValue = transactionData.vout.reduce((acc, output) => acc + output.value, 0);
+                    const totalOutputValue = transactionData.vout.reduce((acc, output) => acc + parseFloat(output.value), 0);
 
                     // Calculate transaction fee
                     transactionFee = totalInputValue - totalOutputValue;

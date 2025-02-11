@@ -663,3 +663,17 @@ nav ul li a {
     display: none;
 }
 
+.label {
+    color: grey;
+}
+
+.overview-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 5px 10px; /* Reduce space between rows and columns */
+}
+
+.overview-table td {
+    padding: 5px; /* Reduce padding in table cells */
+}
+

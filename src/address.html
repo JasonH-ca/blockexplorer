@@ -23,6 +23,29 @@
         <section id="address-info">
             <h2>Address: <span id="address"></span><span id="address-type" class="address-type"></span></h2>
             <p>Balance: <span id="balance"></span> <span id="ticker"></span></p>
+            <div id="frc20-overview" style="display: none;">
+                <h3>Overview</h3>
+                <table class="overview-table">
+                    <tr>
+                        <td class="label">Name</td>
+                        <td><span id="token-name"></span></td>
+                        <td class="label">Contract</td>
+                        <td><span id="token-contract"></span></td>
+                    </tr>
+                    <tr>
+                        <td class="label">Symbol</td>
+                        <td><span id="token-symbol"></span></td>
+                        <td class="label">Owner</td>
+                        <td><a id="owner" href="#"></a></td>
+                    </tr>
+                    <tr>
+                        <td class="label">Supply</td>
+                        <td><span id="total-supply"></span></td>
+                        <td class="label">Decimals</td>
+                        <td><span id="decimals"></span></td>
+                    </tr>
+                </table>
+            </div>
             <h3>Transaction History</h3>
             <div id="loading-spinner" class="spinner" style="display: none;"></div>
             <div id="history"></div>      

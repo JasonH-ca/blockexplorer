@@ -3,6 +3,7 @@ document.addEventListener('DOMContentLoaded', async function() {
     const urlParams = new URLSearchParams(window.location.search);
     const blockchainNetwork = urlParams.get('network') || 'FAB'; // Default to 'FAB' if not specified
     let ticker;
+    let balanceData;
 
     try {
         const response = await fetch('./config/environment.json');
@@ -74,15 +75,22 @@ document.addEventListener('DOMContentLoaded', async function() {
 
             try {
                 // Fetch balance
-                const balanceData = await fetchBlockchainData(`balance/${address}`);
+                balanceData = await fetchBlockchainData(`balance/${address}`);
                 if (balanceData !== null) {
                     document.getElementById('balance').textContent = parseFloat(balanceData.balance).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 8 });
                     const addressTypeElement = document.getElementById('address-type'); // Define addressTypeElement
-                    if ( !balanceData.type || balanceData.type === '') {
+                    if (!balanceData.type || balanceData.type === '') {
                         addressTypeElement.classList.add('hidden');
                     } else {
                         addressTypeElement.classList.remove('hidden');
-                        document.getElementById('address-type').textContent = balanceData.type;
+                        addressTypeElement.textContent = balanceData.type;
+                    }
+
+                    // Check if the address type is FRC20
+                    if (balanceData.type === 'FRC20') {
+                        document.getElementById('frc20-overview').style.display = 'block';
+                        // Fetch and display FRC20 token details
+                        await fetchFRC20Details(address);
                     }
                 } else {
                     document.getElementById('balance').textContent = 'Not found';
@@ -208,6 +216,26 @@ document.addEventListener('DOMContentLoaded', async function() {
         nextButton.classList.toggle('disabled', currentPage === totalPages);
         nextButton.addEventListener('click', () => loadAddressDetails(currentPage + 1, pageSize));
         paginationContainer.appendChild(nextButton);
+    }
+
+    async function fetchFRC20Details(address) {
+        try {
+            const tokenDetails = await fetchBlockchainData(`frc20/${address}`);
+            if (!tokenDetails) {
+                throw new Error('Error fetching FRC20 details');
+            }
+
+            document.getElementById('token-name').textContent = tokenDetails.name;
+            document.getElementById('token-symbol').textContent = tokenDetails.symbol;
+            document.getElementById('total-supply').textContent = parseFloat(tokenDetails.totalSupply).toLocaleString('en-US') + ' ' + tokenDetails.symbol; 
+            document.getElementById('token-contract').textContent = balanceData.address;
+            const ownerElement = document.getElementById('owner');
+            ownerElement.textContent = tokenDetails.owner;
+            ownerElement.href = `address.html?address=${tokenDetails.owner}&network=${blockchainNetwork}`;
+            document.getElementById('decimals').textContent = tokenDetails.decimals;
+        } catch (error) {
+            console.error('Error fetching FRC20 details:', error);
+        }
     }
 
     document.getElementById('logo-link').href = `../index.html?network=${blockchainNetwork}`;

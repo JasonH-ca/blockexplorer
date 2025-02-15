@@ -233,6 +233,11 @@ document.addEventListener('DOMContentLoaded', async function() {
             ownerElement.textContent = tokenDetails.owner;
             ownerElement.href = `address.html?address=${tokenDetails.owner}&network=${blockchainNetwork}`;
             document.getElementById('decimals').textContent = tokenDetails.decimals;
+
+            const createdElement = document.getElementById('created');
+            createdElement.textContent = tokenDetails.createtx;
+            createdElement.href = `transaction.html?txid=${tokenDetails.createtx}&network=${blockchainNetwork}`;
+
         } catch (error) {
             console.error('Error fetching FRC20 details:', error);
         }

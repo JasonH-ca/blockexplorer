@@ -10,10 +10,11 @@
   "license": "ISC",
   "dependencies": {
     "axios": "^0.21.1",
-    "braces": ">=3.0.3"  
+    "bitcoinjs-lib": "^6.1.7",
+    "braces": ">=3.0.3"
   },
   "devDependencies": {
-    "live-server": "^1.2.1",
-    "braces": ">=3.0.3"
+    "braces": ">=3.0.3",
+    "live-server": "^1.2.1"
   }
 }

@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Contracts</title>
+    <link rel="stylesheet" href="styles/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/bitcoinjs-lib@6.0.0/dist/bitcoinjs-lib.min.js"></script>
+</head>
+<body>
+    <header>
+        <div id="logo">
+            <a id="logo-link" href="#">
+                <img id="logo-img" src="assets/fab-logo-o.png" alt="Logo">
+            </a>
+        </div>
+        <div id="search-container">
+            <input type="text" id="search-field" placeholder="block number, block hash, txid, or address...">
+            <button id="search-button"><i class="fas fa-search"></i></button>
+        </div>
+    </header>
+    <main>
+        <h2>Smart Contracts</h2>
+        <div class="tabs">
+            <button class="tab-button active" data-tab="contracts">All</button>
+            <button class="tab-button" data-tab="frc20">FRC20 Tokens</button>
+            <div class="checkbox-container">
+                <input type="checkbox" id="address-format" name="address-format" checked>
+                <label for="address-format">Base58</label>
+            </div>
+        </div>
+        <div id="contracts-tab" class="tab-content active">
+            <table id="contracts-table" class="styled-table">
+                <thead>
+                    <tr>
+                        <th>Address</th>
+                        <th>Symbol</th>
+                        <th>Creation Tx</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Top addresses will be inserted here by JavaScript -->
+                </tbody>
+            </table>
+            <div id="pagination-controls">
+                <button id="prev-page" disabled>Prev</button>
+                <span id="page-info">Page 1</span>
+                <button id="next-page">Next</button>
+            </div>
+        </div>
+        <div id="frc20-tab" class="tab-content">
+            <table id="frc20-table" class="styled-table">
+                <thead>
+                    <tr>
+                        <th>Address</th>
+                        <th>Symbol</th>
+                        <th>Name</th>
+                        <th>Decimals</th>
+                        <th>Creation Tx</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- FRC20 tokens will be inserted here by JavaScript -->
+                </tbody>
+            </table>
+            <div id="frc20-pagination-controls">
+                <button id="frc20-prev-page" disabled>Prev</button>
+                <span id="frc20-page-info">Page 1</span>
+                <button id="frc20-next-page">Next</button>
+            </div>
+        </div>
+    </main>
+    <footer>
+        <p>&copy; 2025 Blockchain Browser</p>
+    </footer>
+    <script src="scripts/search.js"></script>
+    <script src="scripts/smartcontracts.js"></script>
+</body>
+</html>

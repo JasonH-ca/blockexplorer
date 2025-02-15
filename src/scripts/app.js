@@ -11,6 +11,7 @@ document.addEventListener('DOMContentLoaded', async function() {
         blockchainNetwork = network;
         loadConfiguration();
         updateLogo(network);
+        updateLinks();
     }
 
     // Add event listeners to dropdown items
@@ -18,8 +19,25 @@ document.addEventListener('DOMContentLoaded', async function() {
         item.addEventListener('click', event => {
             const selectedNetwork = event.target.getAttribute('data-network');
             setNetwork(selectedNetwork);
-            updateLinks();
-        });    
+        });
+    });
+
+    document.querySelectorAll('.dropdown-content a').forEach(item => {
+        item.addEventListener('click', () => {
+            const network = item.getAttribute('data-network');
+            const smartContractLink = document.getElementById('smart-contract-link');
+            if (network === 'FAB' || network === 'FABTEST') {
+                smartContractLink.style.display = 'inline';
+            } else {
+                smartContractLink.style.display = 'none';
+            }
+            item.parentElement.style.display = 'none';
+        });
+    });
+
+    document.querySelector('.dropbtn').addEventListener('click', () => {
+        const dropdownContent = document.querySelector('.dropdown-content');
+        dropdownContent.style.display = dropdownContent.style.display === 'block' ? 'none' : 'block';
     });
 
     async function loadConfiguration() {
@@ -218,8 +236,34 @@ document.addEventListener('DOMContentLoaded', async function() {
     function updateLinks() {
         document.getElementById('logo-link').href = `index.html?network=${blockchainNetwork}`;
         document.getElementById('top-addresses-link').href = `src/top-addresses.html?network=${blockchainNetwork}`;
+        document.getElementById('smart-contract-link').href = `src/smartcontracts.html?network=${blockchainNetwork}`;
     }
 
     // Initial link update
     updateLinks();
+
+    const smartContractLink = document.getElementById('smart-contract-link');
+    const currentNetwork = document.getElementById('logo-img').getAttribute('data-network');
+
+    // Show Smart Contract link if the current network is FAB or FABTEST
+    if (currentNetwork === 'FAB' || currentNetwork === 'FABTEST') {
+        smartContractLink.style.display = 'inline';
+    }
+
+    document.querySelectorAll('.dropdown-content a').forEach(item => {
+        item.addEventListener('click', () => {
+            const network = item.getAttribute('data-network');
+            if (network === 'FAB' || network === 'FABTEST') {
+                smartContractLink.style.display = 'inline';
+            } else {
+                smartContractLink.style.display = 'none';
+            }
+            item.parentElement.style.display = 'none';
+        });
+    });
+
+    document.querySelector('.dropbtn').addEventListener('click', () => {
+        const dropdownContent = document.querySelector('.dropdown-content');
+        dropdownContent.style.display = dropdownContent.style.display === 'block' ? 'none' : 'block';
+    });
 });

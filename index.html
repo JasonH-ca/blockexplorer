@@ -27,6 +27,7 @@
                     </div>
                 </li>
                 <li><a id="top-addresses-link" href="#">Top Addresses</a></li>
+                <li><a id="smart-contract-link" href="smartcontracts.html?network=FAB">Smart Contract</a></li>
             </ul>
             <div id="search-container">
                 <input type="text" id="search-field" placeholder="block number, block hash, txid, or address...">
@@ -61,17 +62,5 @@
     </footer>
     <script src="src/scripts/app.js"></script>
     <script src="src/scripts/search.js"></script>
-    <script>
-        document.querySelectorAll('.dropdown-content a').forEach(item => {
-        item.addEventListener('click', () => {
-            item.parentElement.style.display = 'none';
-        });
-        });
-
-        document.querySelector('.dropbtn').addEventListener('click', () => {
-            const dropdownContent = document.querySelector('.dropdown-content');
-            dropdownContent.style.display = dropdownContent.style.display === 'block' ? 'none' : 'block';
-        });
-    </script>
 </body>
 </html>

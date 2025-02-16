@@ -67,12 +67,18 @@ document.addEventListener('DOMContentLoaded', async function() {
                     }
                 } else if (/^[a-fA-F0-9]+$/.test(query)) {
                     // Hex address
-                    try {
-                        const hexBuffer = Buffer.from(query, 'hex');
-                        const base58Address = bitcoin.address.toBase58Check(hexBuffer, bitcoin.networks.bitcoin.pubKeyHash);
-                        window.location.href = `${prefix}address.html?address=${base58Address}${networkParam}`;
-                    } catch (error) {
-                        console.error('Error converting hex to base58:', error);
+                    if (blockchainNetwork === 'FAB' || blockchainNetwork === 'FABTEST') {
+                        try {
+                            const hexBuffer = Buffer.from(query, 'hex');
+                            const version = blockchainNetwork === 'FAB' ? bitcoin.networks.bitcoin.pubKeyHash : 0x6F;
+                            const base58Address = bitcoin.address.toBase58Check(hexBuffer, version);
+                            window.location.href = `${prefix}address.html?address=${base58Address}${networkParam}`;
+                        } catch (error) {
+                            console.error('Error converting hex to base58:', error);
+                        }
+                    } else {
+                        // Address
+                        window.location.href = `${prefix}address.html?address=${query}${networkParam}`;
                     }
                 } else {
                     // Address

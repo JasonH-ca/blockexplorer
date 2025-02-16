@@ -22,7 +22,13 @@
     <main>
         <section id="address-info">
             <h2>Address: <span id="address"></span><span id="address-type" class="address-type"></span></h2>
-            <p>Balance: <span id="balance"></span> <span id="ticker"></span></p>
+            <div class="balance-container">
+                <div class="checkbox-container">
+                    <input type="checkbox" id="address-format" name="address-format" checked>
+                    <label for="address-format">Base58</label>
+                </div>
+                <p><span>Balance: </span><span id="balance"></span> <span id="ticker"></span></p>
+            </div>
             <div id="frc20-overview" style="display: none;">
                 <h3>Overview</h3>
                 <table class="overview-table">
@@ -48,7 +54,6 @@
                         <td class="label">Created At</td>
                         <td><a id="created" href="#"></a></td>
                     </tr>
-
                 </table>
             </div>
             <h3>Transaction History</h3>
@@ -63,14 +68,10 @@
             </div>
         </section>
     </main>
-    <div id="address"></div>
-    <div id="balance"></div>
-    <div id="history"></div> <!-- Ensure this element exists -->
-    <div id="pagination"></div> <!-- Ensure this element exists for pagination -->
     <footer>
         <p>&copy; 2025 Blockchain Browser</p>
     </footer>
-    <script src="scripts/address.js"></script>
+    <script src="scripts/bundle.min.js"></script>
     <script src="scripts/search.js"></script>
 </body>
 </html>

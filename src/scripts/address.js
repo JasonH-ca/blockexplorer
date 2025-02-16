@@ -1,9 +1,22 @@
+bitcoin = require('bitcoinjs-lib');
 document.addEventListener('DOMContentLoaded', async function() {
     let apiUrl;
     const urlParams = new URLSearchParams(window.location.search);
     const blockchainNetwork = urlParams.get('network') || 'FAB'; // Default to 'FAB' if not specified
+    const address = urlParams.get('address');
     let ticker;
     let balanceData;
+    let useBase58 = true;
+
+    // Function to convert address format
+    function convertAddressFormat(address) {
+        if (!useBase58) {
+            const decoded = bitcoin.address.fromBase58Check(address);
+            return decoded.hash.toString('hex');
+        } else {
+            return address;
+        }
+    }
 
     try {
         const response = await fetch('./config/environment.json');
@@ -65,7 +78,8 @@ document.addEventListener('DOMContentLoaded', async function() {
     async function loadAddressDetails(page = 1, pageSize = 10) {
         const address = getQueryParam('address');
         if (address) {
-            document.getElementById('address').textContent = address;
+            const formattedAddress = convertAddressFormat(address);
+            document.getElementById('address').textContent = formattedAddress;
 
             // Show loading spinner
             const loadingSpinner = document.getElementById('loading-spinner');
@@ -245,6 +259,12 @@ document.addEventListener('DOMContentLoaded', async function() {
 
     document.getElementById('logo-link').href = `../index.html?network=${blockchainNetwork}`;
     document.getElementById('ticker').textContent = ticker;
+
+    // Event listener for address format toggle
+    document.getElementById('address-format').addEventListener('change', (event) => {
+        useBase58 = event.target.checked;
+        loadAddressDetails();
+    });
 
     // Call the function to load address details
     loadAddressDetails();

@@ -1,3 +1,4 @@
+bitcoin = require('bitcoinjs-lib');
 document.addEventListener('DOMContentLoaded', async function() {
     const urlParams = new URLSearchParams(window.location.search);
     const blockchainNetwork = urlParams.get('network') || 'FAB'; // Default to 'FAB' if not specified

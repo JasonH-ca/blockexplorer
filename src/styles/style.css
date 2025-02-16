@@ -705,9 +705,13 @@ nav ul li a {
 }
 
 .checkbox-container {
-    display: inline-block;
-    margin-left: 10px;
-    margin-top: 5px;
-    vertical-align: middle;
+    display: flex;
+    align-items: center;
+    margin-right: 10px;
+}
+
+.balance-container {
+    display: flex;
+    align-items: center;
 }
 

@@ -1,3 +1,4 @@
+bitcoin = require('bitcoinjs-lib');
 document.addEventListener('DOMContentLoaded', async function() {
     let apiUrl;
     let root = true;
@@ -42,7 +43,10 @@ document.addEventListener('DOMContentLoaded', async function() {
         const searchButton = document.getElementById('search-button');
 
         const performSearch = async () => {
-            const query = searchField.value.trim();
+            let query = searchField.value.trim();
+            if (query.startsWith('0x')) {
+                query = query.slice(2);
+            }
             if (query) {
                 const prefix = root ? 'src/' : '';
                 const networkParam = `&network=${blockchainNetwork}`;
@@ -60,6 +64,15 @@ document.addEventListener('DOMContentLoaded', async function() {
                         }
                     } catch {
                         window.location.href = `${prefix}transaction.html?txid=${query}${networkParam}`;
+                    }
+                } else if (/^[a-fA-F0-9]+$/.test(query)) {
+                    // Hex address
+                    try {
+                        const hexBuffer = Buffer.from(query, 'hex');
+                        const base58Address = bitcoin.address.toBase58Check(hexBuffer, bitcoin.networks.bitcoin.pubKeyHash);
+                        window.location.href = `${prefix}address.html?address=${base58Address}${networkParam}`;
+                    } catch (error) {
+                        console.error('Error converting hex to base58:', error);
                     }
                 } else {
                     // Address

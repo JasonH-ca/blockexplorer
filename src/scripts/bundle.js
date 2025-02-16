@@ -2,3 +2,4 @@
 const bitcoin = require('bitcoinjs-lib');
 require('./smartcontracts.js');
 require('./address.js');
+require('./search.js');

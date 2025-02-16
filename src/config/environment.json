@@ -1,5 +1,5 @@
 {
-    "environment": "debug",
+    "environment": "production",
     "apiServers": {
         "production": {
             "FAB": "https://api.gotrust.me:3000/",

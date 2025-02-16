@@ -97,10 +97,15 @@ document.addEventListener('DOMContentLoaded', async function() {
                 const shortTx = address.createtx.slice(0, 6) + '...' + address.createtx.slice(-6);
                 const creationTxHtml = `<a href="transaction.html?txid=${address.createtx}&network=${blockchainNetwork}">${shortTx}</a>`;
                 const formattedAddress = convertAddressFormat(address.address);
+                let ownerHtml = '';
+                if ( address.owner ) {
+                    ownerHtml = `<a href="address.html?address=${address.owner}&network=${blockchainNetwork}">${address.owner}</a>`;
+                }
                 return `
                 <tr>
                     <td class="address"><a href="address.html?address=${address.address}&network=${blockchainNetwork}">${formattedAddress}</a>${addressTypeHtml}</td>
                     <td class="info">${infoHtml}</td>
+                    <td class="owner">${ownerHtml}</td>
                     <td class="creation-tx">${creationTxHtml}</td>
                 </tr>
             `;
@@ -119,12 +124,16 @@ document.addEventListener('DOMContentLoaded', async function() {
                 const shortTx = token.createtx.slice(0, 6) + '...' + token.createtx.slice(-6);
                 const creationTxHtml = `<a href="transaction.html?txid=${token.createtx}&network=${blockchainNetwork}">${shortTx}</a>`;
                 const formattedAddress = convertAddressFormat(token.address);
+                let ownerHtml = '';
+                if ( token.owner ) {
+                    ownerHtml = `<a href="address.html?address=${token.owner}&network=${blockchainNetwork}">${token.owner}</a>`;
+                }
                 return `
                 <tr>
                     <td class="address"><a href="address.html?address=${token.address}&network=${blockchainNetwork}">${formattedAddress}</a></td>
                     <td class="symbol">${token.symbol}</td>
                     <td class="name">${token.name}</td>
-                    <td class="decimals">${token.decimals}</td>
+                    <td class="owner">${ownerHtml}</td>
                     <td class="creation-tx">${creationTxHtml}</td>
                 </tr>
             `;

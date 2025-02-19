@@ -2,6 +2,7 @@ bitcoin = require('bitcoinjs-lib');
 document.addEventListener('DOMContentLoaded', async function() {
     const urlParams = new URLSearchParams(window.location.search);
     const blockchainNetwork = urlParams.get('network') || 'FAB'; // Default to 'FAB' if not specified
+    const tokenSymbol = urlParams.get('symbol');
     let ticker;
     let apiUrl;
     let useBase58 = true;
@@ -83,6 +84,9 @@ document.addEventListener('DOMContentLoaded', async function() {
 
     // Function to load contracts
     async function loadContracts(page = 1, pageSize = 20) {
+        if (tokenSymbol) {
+            return;
+        }
         const contractsData = await fetchBlockchainData(`contracts?page=${page}&pageSize=${pageSize}`);
         if (contractsData) {
             const contractsTableBody = document.querySelector('#contracts-table tbody');
@@ -99,7 +103,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                 const creationTxHtml = `<a href="transaction.html?txid=${address.createtx}&network=${blockchainNetwork}">${shortTx}</a>`;
                 const formattedAddress = convertAddressFormat(address.address);
                 let ownerHtml = '';
-                if ( address.owner ) {
+                if (address.owner) {
                     ownerHtml = `<a href="address.html?address=${address.owner}&network=${blockchainNetwork}">${address.owner}</a>`;
                 }
                 return `
@@ -118,29 +122,56 @@ document.addEventListener('DOMContentLoaded', async function() {
 
     // Function to load FRC20 tokens
     async function loadFRC20Tokens(page = 1, pageSize = 20) {
-        const frc20Data = await fetchBlockchainData(`frc20tokens?page=${page}&pageSize=${pageSize}`);
-        if (frc20Data) {
-            const frc20TableBody = document.querySelector('#frc20-table tbody');
-            const rows = frc20Data.map(token => {
-                const shortTx = token.createtx.slice(0, 6) + '...' + token.createtx.slice(-6);
-                const creationTxHtml = `<a href="transaction.html?txid=${token.createtx}&network=${blockchainNetwork}">${shortTx}</a>`;
-                const formattedAddress = convertAddressFormat(token.address);
-                let ownerHtml = '';
-                if ( token.owner ) {
-                    ownerHtml = `<a href="address.html?address=${token.owner}&network=${blockchainNetwork}">${token.owner}</a>`;
-                }
-                return `
-                <tr>
-                    <td class="address"><a href="address.html?address=${token.address}&network=${blockchainNetwork}">${formattedAddress}</a></td>
-                    <td class="symbol">${token.symbol}</td>
-                    <td class="name">${token.name}</td>
-                    <td class="owner">${ownerHtml}</td>
-                    <td class="creation-tx">${creationTxHtml}</td>
-                </tr>
-            `;
-            }).join('');
-            frc20TableBody.innerHTML = rows;
-            updateFRC20PaginationControls(page, frc20Data.length, pageSize);
+        if (tokenSymbol) {
+            const frc20Data = await fetchBlockchainData(`frc20/symbol/${tokenSymbol}`);
+            if (frc20Data) {
+                const frc20TableBody = document.querySelector('#frc20-table tbody');
+                const rows = frc20Data.map(token => {
+                    const shortTx = token.createtx.slice(0, 6) + '...' + token.createtx.slice(-6);
+                    const creationTxHtml = `<a href="transaction.html?txid=${token.createtx}&network=${blockchainNetwork}">${shortTx}</a>`;
+                    const formattedAddress = convertAddressFormat(token.address);
+                    let ownerHtml = '';
+                    if (token.owner) {
+                        ownerHtml = `<a href="address.html?address=${token.owner}&network=${blockchainNetwork}">${token.owner}</a>`;
+                    }
+                    return `
+                    <tr>
+                        <td class="address"><a href="address.html?address=${token.address}&network=${blockchainNetwork}">${formattedAddress}</a></td>
+                        <td class="symbol">${token.symbol}</td>
+                        <td class="name">${token.name}</td>
+                        <td class="owner">${ownerHtml}</td>
+                        <td class="creation-tx">${creationTxHtml}</td>
+                    </tr>
+                `;
+                }).join('');
+                frc20TableBody.innerHTML = rows;
+                updateFRC20PaginationControls(page, frc20Data.length, pageSize);
+            }
+        } else {
+            const frc20Data = await fetchBlockchainData(`frc20tokens?page=${page}&pageSize=${pageSize}`);
+            if (frc20Data) {
+                const frc20TableBody = document.querySelector('#frc20-table tbody');
+                const rows = frc20Data.map(token => {
+                    const shortTx = token.createtx.slice(0, 6) + '...' + token.createtx.slice(-6);
+                    const creationTxHtml = `<a href="transaction.html?txid=${token.createtx}&network=${blockchainNetwork}">${shortTx}</a>`;
+                    const formattedAddress = convertAddressFormat(token.address);
+                    let ownerHtml = '';
+                    if (token.owner) {
+                        ownerHtml = `<a href="address.html?address=${token.owner}&network=${blockchainNetwork}">${token.owner}</a>`;
+                    }
+                    return `
+                    <tr>
+                        <td class="address"><a href="address.html?address=${token.address}&network=${blockchainNetwork}">${formattedAddress}</a></td>
+                        <td class="symbol">${token.symbol}</td>
+                        <td class="name">${token.name}</td>
+                        <td class="owner">${ownerHtml}</td>
+                        <td class="creation-tx">${creationTxHtml}</td>
+                    </tr>
+                `;
+                }).join('');
+                frc20TableBody.innerHTML = rows;
+                updateFRC20PaginationControls(page, frc20Data.length, pageSize);
+            }
         }
     }
 
@@ -223,5 +254,23 @@ document.addEventListener('DOMContentLoaded', async function() {
     });
 
     // Initialize the page by loading the first page of contracts
-    loadContracts(currentPage, pageSize);
+    if (tokenSymbol) {
+        const frc20Tab = document.querySelector('.tab-button[data-tab="frc20"]');
+        const frc20TabContent = document.getElementById('frc20-tab');
+        if (frc20Tab && frc20TabContent) {
+            frc20Tab.click();
+            frc20Tab.classList.add('active');
+            frc20TabContent.classList.add('active');
+            loadFRC20Tokens(currentPage, pageSize);
+        }
+    } else {
+        const contractsTab = document.querySelector('.tab-button[data-tab="contracts"]');
+        const contractsTabContent = document.getElementById('contracts-tab');
+        if (contractsTab && contractsTabContent) {
+            contractsTab.click();
+            contractsTab.classList.add('active');
+            contractsTabContent.classList.add('active');
+            loadContracts(currentPage, pageSize);
+        }
+    }
 });

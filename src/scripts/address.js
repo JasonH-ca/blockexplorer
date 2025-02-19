@@ -268,7 +268,10 @@ document.addEventListener('DOMContentLoaded', async function() {
     }
 
     document.getElementById('logo-link').href = `../index.html?network=${blockchainNetwork}`;
-    document.getElementById('ticker').textContent = ticker;
+    const tickerElement = document.getElementById('ticker');
+    if (tickerElement) {
+        tickerElement.textContent = ticker;
+    }
 
     // Event listener for address format toggle
     document.getElementById('address-format').addEventListener('change', (event) => {

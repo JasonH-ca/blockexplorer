@@ -50,7 +50,9 @@ document.addEventListener('DOMContentLoaded', async function() {
             if (query) {
                 const prefix = root ? 'src/' : '';
                 const networkParam = `&network=${blockchainNetwork}`;
-                if (/^\d+$/.test(query)) {
+                if (query.length < 16 && (blockchainNetwork === 'FAB' || blockchainNetwork === 'FABTEST')) {
+                    window.location.href = `${prefix}smartcontracts.html?symbol=${query}${networkParam}`;
+                } else if (/^\d+$/.test(query)) {
                     // Block number
                     window.location.href = `${prefix}block.html?blockNumber=${query}${networkParam}`;
                 } else if (/^[a-fA-F0-9]{64}$/.test(query)) {

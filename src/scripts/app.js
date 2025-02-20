@@ -86,6 +86,7 @@ document.addEventListener('DOMContentLoaded', async function() {
     let currentBlockHeight = null;
     let initialBlockHeight = null;
     let isViewingLatestBlocks = true;
+    let previousChaintip = null;
 
     // Function to fetch blockchain data
     async function fetchBlockchainData(endpoint) {
@@ -128,6 +129,24 @@ document.addEventListener('DOMContentLoaded', async function() {
         return Math.floor(seconds) + " sec";
     }
 
+    // Function to update block times
+    function updateBlockTimes() {
+        const rows = document.querySelectorAll('#blocks-table tbody tr');
+        rows.forEach(row => {
+            const timeCell = row.cells[1];
+            const blockTime = new Date(timeCell.getAttribute('data-time') * 1000);
+            const now = new Date();
+            const timeDifference = now - blockTime;
+            const oneDay = 24 * 60 * 60 * 1000;
+
+            const formattedTime = timeDifference > oneDay
+                ? blockTime.toLocaleString()
+                : `${timeSince(blockTime)} ago`;
+
+            timeCell.textContent = formattedTime;
+        });
+    }
+
     // Function to load blocks
     async function loadBlocks(startBlockHeight) {
         const blocksTableBody = document.querySelector('#blocks-table tbody');
@@ -151,7 +170,7 @@ document.addEventListener('DOMContentLoaded', async function() {
 
                 row.innerHTML = `
                     <td><a href="src/block.html?blockNumber=${blockData.height}&network=${blockchainNetwork}">${blockData.height.toLocaleString()}</a></td>
-                    <td>${formattedTime}</td>
+                    <td data-time="${blockData.time}">${formattedTime}</td>
                     <td>${blockData.tx.length}</td>
                     <td class="size">${blockData.size.toLocaleString()}</td>
                 `;
@@ -175,10 +194,11 @@ document.addEventListener('DOMContentLoaded', async function() {
     // Function to load the latest 20 blocks
     async function loadChainTip() {
         const chaintip = await fetchBlockchainData('latest-block');
-        if (chaintip) {
+        if (chaintip && chaintip.blockNumber !== previousChaintip) {
             currentBlockHeight = chaintip.blockNumber;
             initialBlockHeight = chaintip.blockNumber;
             loadBlocks(currentBlockHeight);
+            previousChaintip = chaintip.blockNumber;
             //loadLatestTransactions();
         }
     }
@@ -225,12 +245,19 @@ document.addEventListener('DOMContentLoaded', async function() {
         }
     });
 
-    // Refresh the content every 5 seconds
+    // Refresh the block times every second
+    setInterval(() => {
+        if (document.querySelector('#blocks-table')) {
+            updateBlockTimes();
+        }
+    }, 1000);
+
+    // Check the chaintip every minute
     setInterval(() => {
         if (document.querySelector('#blocks-table') && isViewingLatestBlocks) {
             loadChainTip();
         }
-    }, 1000);
+    }, 60000);
 
     // Update the href attributes in the HTML
     function updateLinks() {

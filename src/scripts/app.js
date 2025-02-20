@@ -152,12 +152,12 @@ document.addEventListener('DOMContentLoaded', async function() {
         const blocksTableBody = document.querySelector('#blocks-table tbody');
         const newRows = [];
 
-        for (let i = 0; i < 20; i++) {
-            const blockHeight = startBlockHeight - i;
-            if (blockHeight < 1) break; // Ensure block height is not less than 1
+        // Fetch a batch of blocks using the blockheaders endpoint
+        const endBlockHeight = Math.max(startBlockHeight - 19, 1);
+        const blockDataBatch = await fetchBlockchainData(`blocks?start=${startBlockHeight}&end=${endBlockHeight}`);
 
-            const blockData = await fetchBlockchainData(`block/${blockHeight}`);
-            if (blockData) {
+        if (blockDataBatch) {
+            blockDataBatch.forEach(blockData => {
                 const row = document.createElement('tr');
                 const blockTime = new Date(blockData.time * 1000);
                 const now = new Date();
@@ -167,7 +167,6 @@ document.addEventListener('DOMContentLoaded', async function() {
                 const formattedTime = timeDifference > oneDay
                     ? blockTime.toLocaleString()
                     : `${timeSince(blockTime)} ago`;
-
                 row.innerHTML = `
                     <td><a href="src/block.html?blockNumber=${blockData.height}&network=${blockchainNetwork}">${blockData.height.toLocaleString()}</a></td>
                     <td data-time="${blockData.time}">${formattedTime}</td>
@@ -175,7 +174,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                     <td class="size">${blockData.size.toLocaleString()}</td>
                 `;
                 newRows.push(row);
-            }
+            });
         }
 
         // Update the table without flashing

@@ -50,7 +50,7 @@ document.addEventListener('DOMContentLoaded', async function() {
             if (query) {
                 const prefix = root ? 'src/' : '';
                 const networkParam = `&network=${blockchainNetwork}`;
-                if (query.length < 16 && (blockchainNetwork === 'FAB' || blockchainNetwork === 'FABTEST')) {
+                if (query.length < 16 && isNaN(query) && (blockchainNetwork === 'FAB' || blockchainNetwork === 'FABTEST')) {
                     window.location.href = `${prefix}smartcontracts.html?symbol=${query}${networkParam}`;
                 } else if (/^\d+$/.test(query)) {
                     // Block number

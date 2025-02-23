@@ -574,11 +574,8 @@ nav ul li a {
 
 /* Example styles for the table */
 .styled-table {
-    width: 60%;
+    width: 100%;
     border-collapse: collapse;
-    margin: 25px 0;
-    font-size: 18px;
-    text-align: left;
 }
 .styled-table thead tr {
     background-color:#007bff;
@@ -607,6 +604,27 @@ nav ul li a {
 }
 .styled-table td.balance {
     text-align: right;
+}
+
+.styled-table thead th {
+    background-color: #f2f2f2;
+    color: #333;
+    text-align: left;
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+}
+
+.styled-table tbody td {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+}
+
+.styled-table tbody tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+.styled-table tbody tr:hover {
+    background-color: #f1f1f1;
 }
 
 /* Add this to your existing CSS file */
@@ -708,3 +726,6 @@ nav ul li a {
     align-items: center;
 }
 
+.right-align {
+    text-align: right;
+}

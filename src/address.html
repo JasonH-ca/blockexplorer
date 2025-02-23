@@ -56,17 +56,55 @@
                     </tr>
                 </table>
             </div>
-            <h3>Transaction History</h3>
-            <div id="loading-spinner" class="spinner" style="display: none;"></div>
-            <div id="history"></div>      
-            <div id="pagination" class="pagination"></div>  
-            <div id="transaction-history">
-                <!-- Transaction history will be populated here -->
-            </div>
-            <div id="pagination">
-                <!-- Pagination controls will be populated here -->
-            </div>
         </section>
+        <div class="tabs">
+            <button class="tab-button active" data-tab="history">All</button>
+            <button class="tab-button" data-tab="frc20-history">FRC20</button>
+        </div>
+        <div id="history-tab" class="tab-content active">
+            <div id="loading-spinner" class="spinner" style="display: none;"></div>
+            <table id="history-table" class="styled-table">
+                <thead>
+                    <tr>
+                        <th>TxID</th>
+                        <th>Time</th>
+                        <th>Confirmations</th>
+                        <th>Amount</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Transaction history will be inserted here by JavaScript -->
+                </tbody>
+            </table>
+            <div id="pagination-controls">
+                <button id="prev-page" disabled>Prev</button>
+                <span id="page-info">Page 1</span>
+                <button id="next-page">Next</button>
+            </div>
+        </div>
+        <div id="frc20-history-tab" class="tab-content">
+            <table id="frc20-history-table" class="styled-table">
+                <thead>
+                    <tr>
+                        <th>TxID</th>
+                        <th>Method</th>
+                        <th>Block</th>
+                        <th>Age</th>
+                        <th>From</th>
+                        <th>To</th>
+                        <th>Amount</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- FRC20 history will be inserted here by JavaScript -->
+                </tbody>
+            </table>
+            <div id="frc20-pagination-controls">
+                <button id="frc20-prev-page" disabled>Prev</button>
+                <span id="frc20-page-info">Page 1</span>
+                <button id="frc20-next-page">Next</button>
+            </div>
+        </div>
     </main>
     <footer>
         <p>&copy; 2025 Blockchain Browser</p>

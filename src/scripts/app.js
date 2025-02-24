@@ -19,6 +19,7 @@ document.addEventListener('DOMContentLoaded', async function() {
         item.addEventListener('click', event => {
             const selectedNetwork = event.target.getAttribute('data-network');
             setNetwork(selectedNetwork);
+            loadChainTip();
         });
     });
 
@@ -49,6 +50,7 @@ document.addEventListener('DOMContentLoaded', async function() {
             if (!apiUrl) {
                 throw new Error(`API server not configured for ${blockchainNetwork} in ${environment} environment`);
             }
+            previousChaintip = null;
         } catch (error) {
             console.error('Error loading configuration:', error);
             return;

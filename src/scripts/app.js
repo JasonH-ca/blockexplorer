@@ -21,6 +21,12 @@ document.addEventListener('DOMContentLoaded', async function() {
             setNetwork(selectedNetwork);
             loadChainTip();
         });
+        item.addEventListener('touchend', event => {
+            event.preventDefault(); // Prevent the default touch behavior
+            const selectedNetwork = event.target.getAttribute('data-network');
+            setNetwork(selectedNetwork);
+            loadChainTip();
+        });
     });
 
     document.querySelectorAll('.dropdown-content a').forEach(item => {
@@ -34,12 +40,27 @@ document.addEventListener('DOMContentLoaded', async function() {
             }
             item.parentElement.style.display = 'none';
         });
+        item.addEventListener('touchend', event => {
+            event.preventDefault(); // Prevent the default touch behavior
+            const network = item.getAttribute('data-network');
+            const smartContractLink = document.getElementById('smart-contract-link');
+            if (network === 'FAB' || network === 'FABTEST') {
+                smartContractLink.style.display = 'inline';
+            } else {
+                smartContractLink.style.display = 'none';
+            }
+            item.parentElement.style.display = 'none';
+        });
     });
 
-    document.querySelector('.dropbtn').addEventListener('click', () => {
+    const toggleDropdown = (event) => {
+        event.preventDefault(); // Prevent the default touch behavior
         const dropdownContent = document.querySelector('.dropdown-content');
         dropdownContent.style.display = dropdownContent.style.display === 'block' ? 'none' : 'block';
-    });
+    };
+
+    document.querySelector('.dropbtn').addEventListener('click', toggleDropdown);
+    document.querySelector('.dropbtn').addEventListener('touchend', toggleDropdown);
 
     async function loadConfiguration() {
         try {
@@ -290,8 +311,6 @@ document.addEventListener('DOMContentLoaded', async function() {
         });
     });
 
-    document.querySelector('.dropbtn').addEventListener('click', () => {
-        const dropdownContent = document.querySelector('.dropdown-content');
-        dropdownContent.style.display = dropdownContent.style.display === 'block' ? 'none' : 'block';
-    });
+    document.querySelector('.dropbtn').addEventListener('click', toggleDropdown);
+    document.querySelector('.dropbtn').addEventListener('touchend', toggleDropdown);
 });

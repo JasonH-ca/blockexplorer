@@ -169,7 +169,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                                     ${transactionData.vout.map(output => `
                                         <li class="output-item">
                                             ${output.scriptPubKey.addresses ? output.scriptPubKey.addresses.map(address => `<a href="address.html?address=${address}&network=${blockchainNetwork}">${address}</a>`).join(', ') : 'n/a'}<br>
-                                            ${output.value ? `${parseFloat(output.value).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 8 })} ${ticker}` : ''}
+                                            ${output.value ? `${parseFloat(output.value).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 8 })} ${ticker}` : `${output.scriptPubKey.type === 'call' ? 'call' : ''}`}
                                         </li>
                                     `).join('')}
                                 </ul>

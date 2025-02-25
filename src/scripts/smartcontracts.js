@@ -6,6 +6,8 @@ document.addEventListener('DOMContentLoaded', async function() {
     let ticker;
     let apiUrl;
     let useBase58 = true;
+    let currentPage = 1;
+    const pageSize = 20;
 
     async function loadConfiguration() {
         try {
@@ -16,7 +18,7 @@ document.addEventListener('DOMContentLoaded', async function() {
             if (!apiUrl) {
                 throw new Error(`API server not configured for ${blockchainNetwork} in ${environment} environment`);
             }
-            updateLogo(blockchainNetwork)
+            updateLogo(blockchainNetwork);
             if (blockchainNetwork.endsWith("TEST")) {
                 ticker = blockchainNetwork.slice(0, -4);
             } else {
@@ -30,6 +32,7 @@ document.addEventListener('DOMContentLoaded', async function() {
 
     // Initial load
     await loadConfiguration();
+
     // Function to update the logo based on the selected network
     function updateLogo(network) {
         const logoImg = document.getElementById('logo-img');
@@ -54,9 +57,6 @@ document.addEventListener('DOMContentLoaded', async function() {
         }
     }
 
-    let currentPage = 1;
-    const pageSize = 20;
-
     // Function to fetch blockchain data
     async function fetchBlockchainData(endpoint) {
         try {
@@ -72,7 +72,7 @@ document.addEventListener('DOMContentLoaded', async function() {
     }
 
     // Function to convert address format
-    function convertAddressFormat(address) {      
+    function convertAddressFormat(address) {
         if (!useBase58) {
             const decoded = bitcoin.address.fromBase58Check(address);
             return decoded.hash.toString('hex');

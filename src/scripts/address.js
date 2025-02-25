@@ -78,21 +78,6 @@ document.addEventListener('DOMContentLoaded', async function() {
         }
     }
 
-    async function fetchFRC20History(page = 1, pageSize = 10) {
-        const address = getQueryParam('address');
-        try {
-            const frc20HistoryData = await fetchBlockchainData(`frc20history/${address}?page=${page}&pageSize=${pageSize}`);
-            if (frc20HistoryData) {
-                displayFRC20History(frc20HistoryData);
-                setupFRC20HistoryPagination(frc20HistoryData, page, pageSize);
-            } else {
-                setupFRC20HistoryPagination({length: 0}, page, pageSize);
-            }
-        } catch (error) {
-            console.error('Error fetching FRC20 history:', error);
-        }
-    }
-
     async function fetchTokenSymbol(contractAddress) {
         try {
             const tokenDetails = await fetchBlockchainData(`frc20/${contractAddress}`);
@@ -169,40 +154,6 @@ document.addEventListener('DOMContentLoaded', async function() {
         }
     }
 
-    function setupFRC20HistoryPagination(frc20HistoryData, page, pageSize) {
-        currentPage = page; // Update the current page
-        const paginationContainer = document.getElementById('frc20-pagination-controls');
-        if (!paginationContainer) {
-            console.error('FRC20 pagination container not found');
-            return;
-        }
-        paginationContainer.innerHTML = ''; // Clear previous pagination buttons
-
-        const totalPages = Math.ceil(frc20HistoryData.total / pageSize);
-
-        // Previous button
-        const prevButton = document.createElement('button');
-        prevButton.textContent = 'Prev';
-        prevButton.disabled = currentPage === 1;
-        prevButton.classList.toggle('disabled', currentPage === 1);
-        prevButton.addEventListener('click', () => {
-            currentPage--;
-            fetchFRC20History(currentPage, pageSize);
-        });
-        paginationContainer.appendChild(prevButton);
-
-        // Next button
-        const nextButton = document.createElement('button');
-        nextButton.textContent = 'Next';
-        nextButton.disabled = currentPage === totalPages || frc20HistoryData.length < pageSize;
-        nextButton.classList.toggle('disabled', currentPage === totalPages || frc20HistoryData.length < pageSize);
-        nextButton.addEventListener('click', () => {
-            currentPage++;
-            fetchFRC20History(currentPage, pageSize);
-        });
-        paginationContainer.appendChild(nextButton);
-    }
-
     async function loadAddressDetails(page = 1, pageSize = 10) {
         const address = getQueryParam('address');
         if (address) {
@@ -244,10 +195,8 @@ document.addEventListener('DOMContentLoaded', async function() {
                     const historyData = await fetchBlockchainData(`history/${address}?page=${page}&pageSize=${pageSize}`);
                     if (historyData) {
                         await displayHistory(historyData, address);
-                        setupHistoryPagination(historyData, page, pageSize);
-                    } else {
-                        setupHistoryPagination({length:0}, page, pageSize);
-                    }
+                    } 
+                    updateHistoryPagination(historyData, page, pageSize);
                 } catch (error) {
                     console.error('Error fetching data:', error);
                 } finally { // Hide loading spinner
@@ -262,6 +211,33 @@ document.addEventListener('DOMContentLoaded', async function() {
                 if (loadingSpinner) {
                     loadingSpinner.style.display = 'none';
                 }
+            }
+        }
+    }
+
+    async function loadFRC20History(page = 1, pageSize = 10) {
+        const address = getQueryParam('address');
+        try {
+            const formattedAddress = convertAddressFormat(address);
+            document.getElementById('address').textContent = formattedAddress;
+
+            // Show loading spinner
+            const loadingSpinner = document.getElementById('loading-spinner');
+            if (loadingSpinner) {
+                loadingSpinner.style.display = 'block';
+            }
+
+            const frc20HistoryData = await fetchBlockchainData(`frc20history/${address}?page=${page}&pageSize=${pageSize}`);
+            if (frc20HistoryData) {
+                displayFRC20History(frc20HistoryData);
+            } 
+            updateFRC20HistoryPagination(frc20HistoryData, page, pageSize);
+        } catch (error) {
+            console.error('Error fetching FRC20 history:', error);
+        } finally {
+            // Hide loading spinner
+            if (loadingSpinner) {
+                loadingSpinner.style.display = 'none';
             }
         }
     }
@@ -340,38 +316,28 @@ document.addEventListener('DOMContentLoaded', async function() {
     }
 
     // Function to setup pagination for history data
-    function setupHistoryPagination(historyData, page, pageSize) {
+    function updateHistoryPagination(historyData, page, pageSize) {
         currentPage = page; // Update the current page
-        const paginationContainer = document.getElementById('pagination-controls');
-        if (!paginationContainer) {
-            console.error('Pagination container not found');
-            return;
-        }
-        paginationContainer.innerHTML = ''; // Clear previous pagination buttons
+        const dataLength = historyData ? historyData.length : 0;
+        const prevPageButton = document.getElementById('prev-page');
+        const nextPageButton = document.getElementById('next-page');
+        const pageInfo = document.getElementById('page-info');
 
-        const totalPages = Math.ceil(historyData.total / pageSize);
+        prevPageButton.disabled = page === 1;
+        nextPageButton.disabled = dataLength < pageSize;
+        pageInfo.textContent = `${page}`;
+    }
 
-        // Previous button
-        const prevButton = document.createElement('button');
-        prevButton.textContent = 'Prev';
-        prevButton.disabled = currentPage === 1;
-        prevButton.classList.toggle('disabled', currentPage === 1);
-        prevButton.addEventListener('click', () => {
-            currentPage--;
-            loadAddressDetails(currentPage, pageSize);
-        });
-        paginationContainer.appendChild(prevButton);
+    function updateFRC20HistoryPagination(frc20HistoryData, page, pageSize) {
+        currentPage = page; // Update the current page
+        const dataLength = frc20HistoryData ? frc20HistoryData.length : 0;
+        const prevPageButton = document.getElementById('frc20-prev-page');
+        const nextPageButton = document.getElementById('frc20-next-page');
+        const pageInfo = document.getElementById('frc20-page-info');
 
-        // Next button
-        const nextButton = document.createElement('button');
-        nextButton.textContent = 'Next';
-        nextButton.disabled = currentPage === totalPages || historyData.length < pageSize;
-        nextButton.classList.toggle('disabled', currentPage === totalPages || historyData.length < pageSize);
-        nextButton.addEventListener('click', () => {
-            currentPage++;
-            loadAddressDetails(currentPage, pageSize);
-        });
-        paginationContainer.appendChild(nextButton);
+        prevPageButton.disabled = page === 1;
+        nextPageButton.disabled = dataLength < pageSize;
+        pageInfo.textContent = `${page}`;
     }
 
     async function fetchFRC20Details(address) {
@@ -401,6 +367,31 @@ document.addEventListener('DOMContentLoaded', async function() {
         }
     }
 
+    // Event listeners for pagination buttons
+    document.getElementById('prev-page').addEventListener('click', () => {
+        if (currentPage > 1) {
+            currentPage--;
+            loadAddressDetails(currentPage, pageSize);
+        }
+    });
+
+    document.getElementById('next-page').addEventListener('click', () => {
+        currentPage++;
+        loadAddressDetails(currentPage, pageSize);
+    });
+
+    document.getElementById('frc20-prev-page').addEventListener('click', () => {
+        if (currentPage > 1) {
+            currentPage--;
+            loadFRC20History(currentPage, pageSize);
+        }
+    });
+
+    document.getElementById('frc20-next-page').addEventListener('click', () => {
+        currentPage++;
+        loadFRC20History(currentPage, pageSize);
+    });
+
     document.getElementById('logo-link').href = `../index.html?network=${blockchainNetwork}`;
     const tickerElement = document.getElementById('ticker');
     if (tickerElement) {
@@ -419,7 +410,7 @@ document.addEventListener('DOMContentLoaded', async function() {
             if (button.dataset.tab === 'history') {
                 loadAddressDetails();
             } else if (button.dataset.tab === 'frc20-history') {
-                fetchFRC20History();
+                loadFRC20History();
             }
         });
     });
@@ -433,7 +424,7 @@ document.addEventListener('DOMContentLoaded', async function() {
         } else if (activeTab === 'frc20-history') {
             const address = getQueryParam('address');
             fetchFRC20Details(address);
-            fetchFRC20History(currentPage, pageSize);
+            loadFRC20History(currentPage, pageSize);
         }
     });
 

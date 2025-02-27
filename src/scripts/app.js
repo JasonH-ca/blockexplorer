@@ -18,38 +18,28 @@ document.addEventListener('DOMContentLoaded', async function() {
     document.querySelectorAll('.dropdown-content a').forEach(item => {
         item.addEventListener('click', event => {
             const selectedNetwork = event.target.getAttribute('data-network');
+            const smartContractLink = document.getElementById('smart-contract-link');
+            if (selectedNetwork === 'FAB' || selectedNetwork === 'FABTEST') {
+                smartContractLink.style.display = 'inline';
+            } else {
+                smartContractLink.style.display = 'none';
+            }
+            item.parentElement.style.display = 'none';
             setNetwork(selectedNetwork);
             loadChainTip();
         });
         item.addEventListener('touchend', event => {
             event.preventDefault(); // Prevent the default touch behavior
             const selectedNetwork = event.target.getAttribute('data-network');
+            const smartContractLink = document.getElementById('smart-contract-link');
+            if (selectedNetwork === 'FAB' || selectedNetwork === 'FABTEST') {
+                smartContractLink.style.display = 'inline';
+            } else {
+                smartContractLink.style.display = 'none';
+            }
+            item.parentElement.style.display = 'none';
             setNetwork(selectedNetwork);
             loadChainTip();
-        });
-    });
-
-    document.querySelectorAll('.dropdown-content a').forEach(item => {
-        item.addEventListener('click', () => {
-            const network = item.getAttribute('data-network');
-            const smartContractLink = document.getElementById('smart-contract-link');
-            if (network === 'FAB' || network === 'FABTEST') {
-                smartContractLink.style.display = 'inline';
-            } else {
-                smartContractLink.style.display = 'none';
-            }
-            item.parentElement.style.display = 'none';
-        });
-        item.addEventListener('touchend', event => {
-            event.preventDefault(); // Prevent the default touch behavior
-            const network = item.getAttribute('data-network');
-            const smartContractLink = document.getElementById('smart-contract-link');
-            if (network === 'FAB' || network === 'FABTEST') {
-                smartContractLink.style.display = 'inline';
-            } else {
-                smartContractLink.style.display = 'none';
-            }
-            item.parentElement.style.display = 'none';
         });
     });
 
@@ -291,25 +281,15 @@ document.addEventListener('DOMContentLoaded', async function() {
     // Initial link update
     updateLinks();
 
-    const smartContractLink = document.getElementById('smart-contract-link');
     const currentNetwork = document.getElementById('logo-img').getAttribute('data-network');
-
     // Show Smart Contract link if the current network is FAB or FABTEST
     if (currentNetwork === 'FAB' || currentNetwork === 'FABTEST') {
+        const smartContractLink = document.getElementById('smart-contract-link');
         smartContractLink.style.display = 'inline';
+    } else {
+        const smartContractLink = document.getElementById('smart-contract-link');
+        smartContractLink.style.display = 'none';
     }
-
-    document.querySelectorAll('.dropdown-content a').forEach(item => {
-        item.addEventListener('click', () => {
-            const network = item.getAttribute('data-network');
-            if (network === 'FAB' || network === 'FABTEST') {
-                smartContractLink.style.display = 'inline';
-            } else {
-                smartContractLink.style.display = 'none';
-            }
-            item.parentElement.style.display = 'none';
-        });
-    });
 
     document.querySelector('.dropbtn').addEventListener('click', toggleDropdown);
     document.querySelector('.dropbtn').addEventListener('touchend', toggleDropdown);

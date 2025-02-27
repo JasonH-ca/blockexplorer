@@ -729,3 +729,7 @@ nav ul li a {
 .right-align {
     text-align: right;
 }
+
+.monospace {
+    font-family: 'Courier New', Courier, monospace;
+}

@@ -8,6 +8,7 @@ document.addEventListener('DOMContentLoaded', async function() {
     let balanceData;
     let useBase58 = true;
     let tokenSymbol = null;
+    let frc20TotalSupply = null;
     let currentPage = 1; // Track the current page
     const pageSize = 10; // Define the page size
 
@@ -154,6 +155,43 @@ document.addEventListener('DOMContentLoaded', async function() {
         }
     }
 
+    async function displayFRC20Holders(frc20HoldersData, page, pageSize) {
+        const frc20HoldersContainer = document.getElementById('holders-table');
+        if (!frc20HoldersContainer) {
+            console.error('FRC20 holders container not found');
+            return;
+        }
+
+        const tbody = frc20HoldersContainer.querySelector('tbody');
+        tbody.innerHTML = ''; // Clear previous holders items
+
+        if (!frc20HoldersData) {
+            console.error('Invalid FRC20 holders data');
+            return;
+        }
+
+        if (!frc20TotalSupply) {
+            console.error('Invalid FRC20 total supply');
+            return;
+        }
+        const totalSupply = parseFloat(frc20TotalSupply);
+
+        frc20HoldersData.forEach((item, index) => {
+            const rank = (page - 1) * pageSize + index + 1;
+            const percentage = (parseFloat(item.balance) / totalSupply) * 100;
+            const converted = convertAddressFormat(item.address);
+
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${rank}</td>
+                <td><a href="address.html?address=${item.address}&network=${blockchainNetwork}">${converted}</a></td>
+                <td>${parseFloat(item.balance).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 8 })}</td>
+                <td>${percentage.toFixed(2)}%</td>
+            `;
+            tbody.appendChild(row);
+        });
+    }
+
     async function loadAddressDetails(page = 1, pageSize = 10) {
         const address = getQueryParam('address');
         if (address) {
@@ -182,9 +220,30 @@ document.addEventListener('DOMContentLoaded', async function() {
                     // Check if the address type is FRC20
                     if (balanceData.type === 'FRC20') {
                         document.getElementById('frc20-overview').style.display = 'block';
+                        document.querySelector('[data-tab="holders"]').style.display = 'inline-block'; // Show the holders tab
+                        // Hide the balance dropdown
+                        document.getElementById('tokenbal-label').style.display = 'none';
+                        document.getElementById('balance-dropdown').style.display = 'none';
                         // Fetch and display FRC20 token details
                         const tokenDetails = await fetchFRC20Details(address);
                         tokenSymbol = tokenDetails.symbol; // Store the token symbol
+                    } else {
+                        // Populate the balance dropdown for non-FRC20 addresses
+                        const balanceDropdown = document.getElementById('balance-dropdown');
+                        balanceDropdown.style.display = 'inline-block';
+                        balanceDropdown.innerHTML = ''; // Clear previous options
+                        const tokenBalancesData = await fetchBlockchainData(`frc20balances/address/${address}?page=${page}&pageSize=${pageSize}`);
+
+                        tokenBalancesData.forEach(balance => {
+                            const option = document.createElement('option');
+                            option.value = balance.contract;
+                            option.classList.add('monospace');
+                            const converted = convertAddressFormat(balance.contract);
+                            const name = `${balance.symbol}(${converted.slice(0, 6) + '...'}):    `;
+                            const bal = `${parseFloat(balance.balance).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 8 })}`;
+                            option.textContent = name + bal;
+                            balanceDropdown.appendChild(option);
+                        });
                     }
                 } else {
                     document.getElementById('balance').textContent = 'Not found';
@@ -234,6 +293,33 @@ document.addEventListener('DOMContentLoaded', async function() {
             updateFRC20HistoryPagination(frc20HistoryData, page, pageSize);
         } catch (error) {
             console.error('Error fetching FRC20 history:', error);
+        } finally {
+            // Hide loading spinner
+            if (loadingSpinner) {
+                loadingSpinner.style.display = 'none';
+            }
+        }
+    }
+
+    async function loadHolders(page = 1, pageSize = 10) {
+        const address = getQueryParam('address');
+        try {
+            const formattedAddress = convertAddressFormat(address);
+            document.getElementById('address').textContent = formattedAddress;
+
+            // Show loading spinner
+            const loadingSpinner = document.getElementById('loading-spinner');
+            if (loadingSpinner) {
+                loadingSpinner.style.display = 'block';
+            }
+
+            const frc20HoldersData = await fetchBlockchainData(`frc20balances/contract/${address}?page=${page}&pageSize=${pageSize}`);
+            if (frc20HoldersData) {
+                displayFRC20Holders(frc20HoldersData, page, pageSize);
+            } 
+            updateFRC20HoldersPagination(frc20HoldersData, page, pageSize);
+        } catch (error) {
+            console.error('Error fetching FRC20 holders:', error);
         } finally {
             // Hide loading spinner
             if (loadingSpinner) {
@@ -340,12 +426,26 @@ document.addEventListener('DOMContentLoaded', async function() {
         pageInfo.textContent = `${page}`;
     }
 
+    function updateFRC20HoldersPagination(frc20HoldersData, page, pageSize) {
+        currentPage = page; // Update the current page
+        const dataLength = frc20HoldersData ? frc20HoldersData.length : 0;
+        const prevPageButton = document.getElementById('holders-prev-page');
+        const nextPageButton = document.getElementById('holders-next-page');
+        const pageInfo = document.getElementById('holders-page-info');
+
+        prevPageButton.disabled = page === 1;
+        nextPageButton.disabled = dataLength < pageSize;
+        pageInfo.textContent = `${page}`;
+    }
+
     async function fetchFRC20Details(address) {
         try {
             const tokenDetails = await fetchBlockchainData(`frc20/${address}`);
             if (!tokenDetails) {
                 throw new Error('Error fetching FRC20 details');
             }
+
+            frc20TotalSupply = tokenDetails.totalSupply;
 
             document.getElementById('token-name').textContent = tokenDetails.name;
             document.getElementById('token-symbol').textContent = tokenDetails.symbol;
@@ -392,6 +492,18 @@ document.addEventListener('DOMContentLoaded', async function() {
         loadFRC20History(currentPage, pageSize);
     });
 
+    document.getElementById('holders-prev-page').addEventListener('click', () => {
+        if (currentPage > 1) {
+            currentPage--;
+            loadHolders(currentPage, pageSize);
+        }
+    });
+
+    document.getElementById('holders-next-page').addEventListener('click', () => {
+        currentPage++;
+        loadHolders(currentPage, pageSize);
+    });
+
     document.getElementById('logo-link').href = `../index.html?network=${blockchainNetwork}`;
     const tickerElement = document.getElementById('ticker');
     if (tickerElement) {
@@ -411,6 +523,8 @@ document.addEventListener('DOMContentLoaded', async function() {
                 loadAddressDetails();
             } else if (button.dataset.tab === 'frc20-history') {
                 loadFRC20History();
+            } else if (button.dataset.tab === 'holders') {
+                loadHolders();
             }
         });
     });
@@ -425,9 +539,16 @@ document.addEventListener('DOMContentLoaded', async function() {
             const address = getQueryParam('address');
             fetchFRC20Details(address);
             loadFRC20History(currentPage, pageSize);
+        } else if (activeTab === 'holders') {
+            const address = getQueryParam('address');
+            fetchFRC20Details(address);
+            loadHolders(currentPage, pageSize);
         }
     });
 
-    // Call the function to load address details
-    loadAddressDetails();
+    // Hide holders tab by default
+    document.querySelector('[data-tab="holders"]').style.display = 'none';
+
+    // Initial load
+    loadAddressDetails(currentPage, pageSize);
 });

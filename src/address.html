@@ -27,7 +27,14 @@
                     <input type="checkbox" id="address-format" name="address-format" checked>
                     <label for="address-format">Base58</label>
                 </div>
-                <p><span>Balance: </span><span id="balance"></span> <span id="ticker"></span></p>
+                <p>
+                    <span>Balance: </span>
+                    <span id="balance"></span> 
+                    <span id="ticker"></span>
+
+                    <span id="tokenbal-label">Tokens: </span>
+                    <select id="balance-dropdown"></select>
+                </p>
             </div>
             <div id="frc20-overview" style="display: none;">
                 <h3>Overview</h3>
@@ -60,6 +67,7 @@
         <div class="tabs">
             <button class="tab-button active" data-tab="history">All</button>
             <button class="tab-button" data-tab="frc20-history">FRC20</button>
+            <button class="tab-button" data-tab="holders">Holders</button> <!-- New tab button for holders -->
         </div>
         <div id="history-tab" class="tab-content active">
             <div id="loading-spinner" class="spinner" style="display: none;"></div>
@@ -103,6 +111,26 @@
                 <button id="frc20-prev-page" disabled>Prev</button>
                 <span id="frc20-page-info">Page 1</span>
                 <button id="frc20-next-page">Next</button>
+            </div>
+        </div>
+        <div id="holders-tab" class="tab-content"> <!-- New tab content for holders -->
+            <table id="holders-table" class="styled-table">
+                <thead>
+                    <tr>
+                        <th>Rank</th>
+                        <th>Address</th>
+                        <th>Balance</th>
+                        <th>Percentage</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Holders list will be inserted here by JavaScript -->
+                </tbody>
+            </table>
+            <div id="holders-pagination-controls">
+                <button id="holders-prev-page" disabled>Prev</button>
+                <span id="holders-page-info">Page 1</span>
+                <button id="holders-next-page">Next</button>
             </div>
         </div>
     </main>

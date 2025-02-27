@@ -19,7 +19,7 @@ document.addEventListener('DOMContentLoaded', async function() {
             throw new Error(`API server not configured for ${blockchainNetwork}`);
         }
     } catch (error) {
-        console.error('Error loading configuration:', error);
+        //console.error('Error loading configuration:', error);
         return;
     }
 

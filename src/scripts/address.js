@@ -37,7 +37,7 @@ document.addEventListener('DOMContentLoaded', async function() {
             ticker = blockchainNetwork;
         }
     } catch (error) {
-        console.error('Error loading configuration:', error);
+        //console.error('Error loading configuration:', error);
         return;
     }
 
@@ -194,12 +194,12 @@ document.addEventListener('DOMContentLoaded', async function() {
 
     async function loadAddressDetails(page = 1, pageSize = 10) {
         const address = getQueryParam('address');
+        const loadingSpinner = document.getElementById('loading-spinner');
         if (address) {
             const formattedAddress = convertAddressFormat(address);
             document.getElementById('address').textContent = formattedAddress;
 
             // Show loading spinner
-            const loadingSpinner = document.getElementById('loading-spinner');
             if (loadingSpinner) {
                 loadingSpinner.style.display = 'block';
             }
@@ -285,12 +285,15 @@ document.addEventListener('DOMContentLoaded', async function() {
 
     async function loadFRC20History(page = 1, pageSize = 10) {
         const address = getQueryParam('address');
+        const loadingSpinner = document.getElementById('loading-spinner');
         try {
             const formattedAddress = convertAddressFormat(address);
-            document.getElementById('address').textContent = formattedAddress;
+            const addressTitle = document.getElementById('address');
+            if (addressTitle) {
+                addressTitle.textContent = formattedAddress;
+            }
 
             // Show loading spinner
-            const loadingSpinner = document.getElementById('loading-spinner');
             if (loadingSpinner) {
                 loadingSpinner.style.display = 'block';
             }
@@ -312,12 +315,12 @@ document.addEventListener('DOMContentLoaded', async function() {
 
     async function loadHolders(page = 1, pageSize = 10) {
         const address = getQueryParam('address');
+        const loadingSpinner = document.getElementById('loading-spinner');
         try {
             const formattedAddress = convertAddressFormat(address);
             document.getElementById('address').textContent = formattedAddress;
 
             // Show loading spinner
-            const loadingSpinner = document.getElementById('loading-spinner');
             if (loadingSpinner) {
                 loadingSpinner.style.display = 'block';
             }

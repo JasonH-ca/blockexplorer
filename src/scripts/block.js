@@ -20,7 +20,7 @@ document.addEventListener('DOMContentLoaded', async function() {
             ticker = blockchainNetwork;
         }
     } catch (error) {
-        console.error('Error loading configuration:', error);
+        //console.error('Error loading configuration:', error);
         return;
     }
 

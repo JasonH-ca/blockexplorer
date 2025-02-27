@@ -4,6 +4,10 @@ document.addEventListener('DOMContentLoaded', async function() {
     const urlParams = new URLSearchParams(window.location.search);
     let blockchainNetwork = urlParams.get('network') || 'FAB'; // Default to 'FAB' if not specified
     let apiUrl;
+    let currentBlockHeight = null;
+    let initialBlockHeight = null;
+    let isViewingLatestBlocks = true;
+    let previousChaintip = null;
 
     // Function to set the network based on dropdown selection
     function setNetwork(network) {
@@ -63,7 +67,7 @@ document.addEventListener('DOMContentLoaded', async function() {
             }
             previousChaintip = null;
         } catch (error) {
-            console.error('Error loading configuration:', error);
+            //console.error('Error loading configuration:', error);
             return;
         }
     }
@@ -95,11 +99,6 @@ document.addEventListener('DOMContentLoaded', async function() {
     // Initial load
     await loadConfiguration();
     updateLogo(blockchainNetwork);
-
-    let currentBlockHeight = null;
-    let initialBlockHeight = null;
-    let isViewingLatestBlocks = true;
-    let previousChaintip = null;
 
     // Function to fetch blockchain data
     async function fetchBlockchainData(endpoint) {
@@ -281,9 +280,8 @@ document.addEventListener('DOMContentLoaded', async function() {
     // Initial link update
     updateLinks();
 
-    const currentNetwork = document.getElementById('logo-img').getAttribute('data-network');
     // Show Smart Contract link if the current network is FAB or FABTEST
-    if (currentNetwork === 'FAB' || currentNetwork === 'FABTEST') {
+    if (blockchainNetwork === 'FAB' || blockchainNetwork === 'FABTEST') {
         const smartContractLink = document.getElementById('smart-contract-link');
         smartContractLink.style.display = 'inline';
     } else {

@@ -25,7 +25,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                 ticker = blockchainNetwork;
             }
         } catch (error) {
-            console.error('Error loading configuration:', error);
+            //console.error('Error loading configuration:', error);
             return;
         }
     }
@@ -198,29 +198,41 @@ document.addEventListener('DOMContentLoaded', async function() {
     }
 
     // Event listeners for pagination buttons
-    document.getElementById('prev-page').addEventListener('click', () => {
-        if (currentPage > 1) {
-            currentPage--;
+    const prevPageButton = document.getElementById('prev-page');
+    if (prevPageButton) {
+        prevPageButton.addEventListener('click', () => {
+            if (currentPage > 1) {
+                currentPage--;
+                loadContracts(currentPage, pageSize);
+            }
+        });
+    }
+
+    const nextPageButton = document.getElementById('next-page');
+    if (nextPageButton) {
+        nextPageButton.addEventListener('click', () => {
+            currentPage++;
             loadContracts(currentPage, pageSize);
-        }
-    });
+        });
+    }
 
-    document.getElementById('next-page').addEventListener('click', () => {
-        currentPage++;
-        loadContracts(currentPage, pageSize);
-    });
+    const frc20PrevPageButton = document.getElementById('frc20-prev-page');
+    if (frc20PrevPageButton) {
+        frc20PrevPageButton.addEventListener('click', () => {
+            if (currentPage > 1) {
+                currentPage--;
+                loadFRC20Tokens(currentPage, pageSize);
+            }
+        });
+    }
 
-    document.getElementById('frc20-prev-page').addEventListener('click', () => {
-        if (currentPage > 1) {
-            currentPage--;
+    const frc20NextPageButton = document.getElementById('frc20-next-page');
+    if (frc20NextPageButton) {
+        frc20NextPageButton.addEventListener('click', () => {
+            currentPage++;
             loadFRC20Tokens(currentPage, pageSize);
-        }
-    });
-
-    document.getElementById('frc20-next-page').addEventListener('click', () => {
-        currentPage++;
-        loadFRC20Tokens(currentPage, pageSize);
-    });
+        });
+    }
 
     document.getElementById('logo-link').href = `../index.html?network=${blockchainNetwork}`;
 
@@ -234,24 +246,29 @@ document.addEventListener('DOMContentLoaded', async function() {
             document.getElementById(`${button.dataset.tab}-tab`).classList.add('active');
 
             if (button.dataset.tab === 'contracts') {
+                currentPage = 1;
                 loadContracts(currentPage, pageSize);
             } else if (button.dataset.tab === 'frc20') {
+                currentPage = 1;
                 loadFRC20Tokens(currentPage, pageSize);
             }
         });
     });
 
     // Event listener for address format toggle
-    document.getElementById('address-format').addEventListener('change', (event) => {
-        useBase58 = event.target.checked;
-        // Reload the current tab to apply the new address format
-        const activeTab = document.querySelector('.tab-button.active').dataset.tab;
-        if (activeTab === 'contracts') {
-            loadContracts(currentPage, pageSize);
-        } else if (activeTab === 'frc20') {
-            loadFRC20Tokens(currentPage, pageSize);
-        }
-    });
+    const useBase58Checkbox = document.getElementById('address-format');
+    if (useBase58Checkbox) {
+        useBase58Checkbox.addEventListener('change', (event) => {
+            useBase58 = event.target.checked;
+            // Reload the current tab to apply the new address format
+            const activeTab = document.querySelector('.tab-button.active').dataset.tab;
+            if (activeTab === 'contracts') {
+                loadContracts(currentPage, pageSize);
+            } else if (activeTab === 'frc20') {
+                loadFRC20Tokens(currentPage, pageSize);
+            }
+        });
+    }
 
     // Initialize the page by loading the first page of contracts
     if (tokenSymbol) {

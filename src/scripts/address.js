@@ -227,27 +227,28 @@ document.addEventListener('DOMContentLoaded', async function() {
                         // Fetch and display FRC20 token details
                         const tokenDetails = await fetchFRC20Details(address);
                         tokenSymbol = tokenDetails.symbol; // Store the token symbol
-                    } else if ( nextwork === 'FAB' || nextwork === 'FABTEST' ) {
+                    } else if ( blockchainNetwork === 'FAB' || blockchainNetwork === 'FABTEST' ) {
                         // Populate the balance dropdown for non-FRC20 addresses
                         const tokenBalancesData = await fetchBlockchainData(`frc20balances/address/${address}?page=${page}&pageSize=${pageSize}`);
                         if (!tokenBalancesData || tokenBalancesData.length === 0) {
                             // Hide the balance dropdown
                             document.getElementById('tokenbal-label').style.display = 'none';
                             document.getElementById('balance-dropdown').style.display = 'none';
+                        } else {
+                            const balanceDropdown = document.getElementById('balance-dropdown');
+                            balanceDropdown.style.display = 'inline-block';
+                            balanceDropdown.innerHTML = ''; // Clear previous options
+                            tokenBalancesData.forEach(balance => {
+                                const option = document.createElement('option');
+                                option.value = balance.contract;
+                                option.classList.add('monospace');
+                                const converted = convertAddressFormat(balance.contract);
+                                const name = `${balance.symbol}(${converted.slice(0, 6) + '...'}):    `;
+                                const bal = `${parseFloat(balance.balance).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 8 })}`;
+                                option.textContent = name + bal;
+                                balanceDropdown.appendChild(option);
+                            });
                         }
-                        const balanceDropdown = document.getElementById('balance-dropdown');
-                        balanceDropdown.style.display = 'inline-block';
-                        balanceDropdown.innerHTML = ''; // Clear previous options
-                        tokenBalancesData.forEach(balance => {
-                            const option = document.createElement('option');
-                            option.value = balance.contract;
-                            option.classList.add('monospace');
-                            const converted = convertAddressFormat(balance.contract);
-                            const name = `${balance.symbol}(${converted.slice(0, 6) + '...'}):    `;
-                            const bal = `${parseFloat(balance.balance).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 8 })}`;
-                            option.textContent = name + bal;
-                            balanceDropdown.appendChild(option);
-                        });
                     } else {
                         // Hide the balance dropdown
                         document.getElementById('tokenbal-label').style.display = 'none';

@@ -227,13 +227,17 @@ document.addEventListener('DOMContentLoaded', async function() {
                         // Fetch and display FRC20 token details
                         const tokenDetails = await fetchFRC20Details(address);
                         tokenSymbol = tokenDetails.symbol; // Store the token symbol
-                    } else {
+                    } else if ( nextwork === 'FAB' || nextwork === 'FABTEST' ) {
                         // Populate the balance dropdown for non-FRC20 addresses
+                        const tokenBalancesData = await fetchBlockchainData(`frc20balances/address/${address}?page=${page}&pageSize=${pageSize}`);
+                        if (!tokenBalancesData || tokenBalancesData.length === 0) {
+                            // Hide the balance dropdown
+                            document.getElementById('tokenbal-label').style.display = 'none';
+                            document.getElementById('balance-dropdown').style.display = 'none';
+                        }
                         const balanceDropdown = document.getElementById('balance-dropdown');
                         balanceDropdown.style.display = 'inline-block';
                         balanceDropdown.innerHTML = ''; // Clear previous options
-                        const tokenBalancesData = await fetchBlockchainData(`frc20balances/address/${address}?page=${page}&pageSize=${pageSize}`);
-
                         tokenBalancesData.forEach(balance => {
                             const option = document.createElement('option');
                             option.value = balance.contract;
@@ -244,6 +248,10 @@ document.addEventListener('DOMContentLoaded', async function() {
                             option.textContent = name + bal;
                             balanceDropdown.appendChild(option);
                         });
+                    } else {
+                        // Hide the balance dropdown
+                        document.getElementById('tokenbal-label').style.display = 'none';
+                        document.getElementById('balance-dropdown').style.display = 'none';
                     }
                 } else {
                     document.getElementById('balance').textContent = 'Not found';

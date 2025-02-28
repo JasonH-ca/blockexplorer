@@ -29,6 +29,8 @@ document.addEventListener('DOMContentLoaded', async function() {
                 smartContractLink.style.display = 'none';
             }
             item.parentElement.style.display = 'none';
+            const searchnetwork = document.getElementById('search-network');
+            searchnetwork.value = selectedNetwork;
             setNetwork(selectedNetwork);
             loadChainTip();
         });
@@ -42,6 +44,8 @@ document.addEventListener('DOMContentLoaded', async function() {
                 smartContractLink.style.display = 'none';
             }
             item.parentElement.style.display = 'none';
+            const searchnetwork = document.getElementById('search-network');
+            searchnetwork.value = selectedNetwork;
             setNetwork(selectedNetwork);
             loadChainTip();
         });

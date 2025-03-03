@@ -229,7 +229,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                         tokenSymbol = tokenDetails.symbol; // Store the token symbol
                     } else if ( blockchainNetwork === 'FAB' || blockchainNetwork === 'FABTEST' ) {
                         // Populate the balance dropdown for non-FRC20 addresses
-                        const tokenBalancesData = await fetchBlockchainData(`frc20balances/address/${address}?page=${page}&pageSize=${pageSize}`);
+                        const tokenBalancesData = await fetchBlockchainData(`frc20balances/address/${address}?page=${page}&pageSize=1000`);
                         if (!tokenBalancesData || tokenBalancesData.length === 0) {
                             // Hide the balance dropdown
                             document.getElementById('tokenbal-label').style.display = 'none';

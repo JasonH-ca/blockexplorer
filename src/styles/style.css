@@ -1,8 +1,11 @@
 body {
-    font-family: 'Courier New', Courier, monospace;
+    font-family: 'Inter', Helvetica, Arial, sans-serif;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1.5;    
     margin: 0;
     padding: 0;
-    background-color: #f4f4f4;
+    background-color: #f4f4f4;   
 }
 
 header {
@@ -392,6 +395,8 @@ nav ul li a {
 
 /* Styles for hex data */
 .hex-data {
+    font-size: 12px; /* Match this to the base font size of your project */
+    font-family: 'Roboto Mono', monospace; /* Use Roboto Mono for consistent width */
     white-space: pre-wrap; /* Ensure hex string wraps within the cell */
     word-wrap: break-word; /* Ensure long words are wrapped */
     overflow-wrap: break-word; /* Ensures long words break correctly */
@@ -731,5 +736,8 @@ nav ul li a {
 }
 
 .monospace {
-    font-family: 'Courier New', Courier, monospace;
+    font-family: 'Roboto Mono', monospace; /* Use Roboto Mono for consistent width */
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1.5;
 }

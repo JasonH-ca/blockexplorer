@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Block Detail</title>
+    <link rel="stylesheet" href="styles/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <header>
+        <div id="logo">
+            <a id="logo-link" href="#">
+                <img id="logo-img" src="assets/kanban.png" alt="Logo">
+            </a>
+        </div>
+        <div id="search-container">
+            <input type="text" id="search-field" placeholder="block number, block hash, txid, or address...">
+            <input type="hidden" id="search-network" value="KANBAN"> <!-- Hidden input for network -->
+            <button id="search-button"><i class="fas fa-search"></i></button>
+        </div>
+    </header>
+    <main>
+        <h2>Block Information</h2>
+        <div id="block-info">
+            <!-- Block details will be inserted here by JavaScript -->
+        </div>
+    </main>
+    <footer>
+        <p>&copy; 2025 Blockchain Browser</p>
+    </footer>
+    <script src="scripts/kbblock.js"></script>
+    <script src="scripts/bundle.min.js"></script>
+</body>
+</html>

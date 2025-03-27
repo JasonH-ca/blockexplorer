@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Address Details</title>
+    <link rel="stylesheet" href="styles/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <header>
+        <div id="logo">
+            <a id="logo-link" href="#">
+                <img id="logo-img" src="assets/fab-logo-o.png" alt="Logo">
+            </a>
+        </div>
+        <div id="search-container">
+            <input type="text" id="search-field" placeholder="block number, block hash, txid, or address...">
+            <input type="hidden" id="search-network" value="KANBAN"> <!-- Hidden input for network -->
+            <button id="search-button"><i class="fas fa-search"></i></button>
+        </div>
+    </header>
+    <main>
+        <section id="address-info">
+            <h2>Address: <span id="address"></span><span id="address-type" class="address-type"></span></h2>
+            <div class="balance-container">
+                <div class="checkbox-container">
+                    <input type="checkbox" id="address-format" name="address-format" unchecked>
+                    <label for="address-format">Base58</label>
+                </div>
+                <p>
+                    <span>Balance: </span>
+                    <span id="balance"></span> 
+                    <span id="ticker"></span>
+
+                    <span id="tokenbal-label">Tokens: </span>
+                    <select id="balance-dropdown"></select>
+                </p>
+            </div>
+            <div id="erc20-overview" style="display: none;">
+                <h3>Overview</h3>
+                <table class="overview-table">
+                    <tr>
+                        <td class="label">Name</td>
+                        <td><span id="token-name"></span></td>
+                        <td class="label">Contract</td>
+                        <td><span id="token-contract"></span></td>
+                    </tr>
+                    <tr>
+                        <td class="label">Symbol</td>
+                        <td><span id="token-symbol"></span></td>
+                        <td class="label">Owner</td>
+                        <td><a id="owner" href="#"></a></td>
+                    </tr>
+                    <tr>
+                        <td class="label">Total Supply</td>
+                        <td><span id="total-supply"></span></td>
+                        <td class="label">Decimals</td>
+                        <td><span id="decimals"></span></td>
+                    </tr>
+                    <tr>
+                        <td class="label">Created At</td>
+                        <td><a id="created" href="#"></a></td>
+                    </tr>
+                </table>
+            </div>
+        </section>
+        <div class="tabs">
+            <button class="tab-button active" data-tab="history">All</button>
+            <button class="tab-button" data-tab="erc20-history">ERC20</button>
+            <button class="tab-button" data-tab="holders">Holders</button> <!-- New tab button for holders -->
+            <button class="tab-button" data-tab="v2-transfer">V2 Transfer</button>
+            <button class="tab-button" data-tab="v2-crosschain">V2 Deposit/Withdraw</button>
+            <button class="tab-button" data-tab="v3-crosschain">V3 Deposit/Withdraw</button>
+        </div>
+        <div id="history-tab" class="tab-content active">
+            <div id="loading-spinner" class="spinner" style="display: none;"></div>
+            <table id="history-table" class="styled-table">
+                <thead>
+                    <tr>
+                        <th>TxID</th>
+                        <th>Method</th>
+                        <th>Block</th>
+                        <th>Age</th>
+                        <th>From</th>
+                        <th>To</th>
+                        <th>Amount</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Transaction history will be inserted here by JavaScript -->
+                </tbody>
+            </table>
+            <div id="pagination-controls">
+                <button id="prev-page" disabled>Prev</button>
+                <span id="page-info">Page 1</span>
+                <button id="next-page">Next</button>
+            </div>
+        </div>
+        <div id="erc20-history-tab" class="tab-content">
+            <table id="erc20-history-table" class="styled-table">
+                <thead>
+                    <tr>
+                        <th>TxID</th>
+                        <th>Method</th>
+                        <th>Block</th>
+                        <th>Age</th>
+                        <th>From</th>
+                        <th>To</th>
+                        <th>Amount</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- ERC20 history will be inserted here by JavaScript -->
+                </tbody>
+            </table>
+            <div id="erc20-pagination-controls">
+                <button id="erc20-prev-page" disabled>Prev</button>
+                <span id="erc20-page-info">Page 1</span>
+                <button id="erc20-next-page">Next</button>
+            </div>
+        </div>
+        <div id="holders-tab" class="tab-content"> <!-- New tab content for holders -->
+            <table id="holders-table" class="styled-table">
+                <thead>
+                    <tr>
+                        <th>Rank</th>
+                        <th>Address</th>
+                        <th>Balance</th>
+                        <th>Percentage</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Holders list will be inserted here by JavaScript -->
+                </tbody>
+            </table>
+            <div id="holders-pagination-controls">
+                <button id="holders-prev-page" disabled>Prev</button>
+                <span id="holders-page-info">Page 1</span>
+                <button id="holders-next-page">Next</button>
+            </div>
+        </div>
+        <div id="v2-transfer-tab" class="tab-content">
+            <table id="v2-transfer-table" class="styled-table">
+                <thead>
+                    <tr>
+                        <th>TxID</th>
+                        <th>Block</th>
+                        <th>Age</th>
+                        <th>From</th>
+                        <th>To</th>
+                        <th>Amount</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- ERC20 history will be inserted here by JavaScript -->
+                </tbody>
+            </table>
+            <div id="v2t-pagination-controls">
+                <button id="v2t-prev-page" disabled>Prev</button>
+                <span id="v2t-page-info">Page 1</span>
+                <button id="v2t-next-page">Next</button>
+            </div>
+        </div>
+        <div id="v2-crosschain-tab" class="tab-content">
+            <table id="v2-crosschain-table" class="styled-table">
+                <thead>
+                    <tr>
+                        <th>Request</th>
+                        <th>Method</th>
+                        <th>Block</th>
+                        <th>Age</th>
+                        <th>To</th>
+                        <th>Chain</th>
+                        <th>Process</th>
+                        <th>Amount</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- ERC20 history will be inserted here by JavaScript -->
+                </tbody>
+            </table>
+            <div id="v2c-pagination-controls">
+                <button id="v2c-prev-page" disabled>Prev</button>
+                <span id="v2c-page-info">Page 1</span>
+                <button id="v2c-next-page">Next</button>
+            </div>
+        </div>
+        <div id="v3-crosschain-tab" class="tab-content">
+            <table id="v3-crosschain-table" class="styled-table">
+                <thead>
+                    <tr>
+                        <th>Request</th>
+                        <th>Method</th>
+                        <th>Block</th>
+                        <th>Age</th>
+                        <th>To</th>
+                        <th>Chain</th>
+                        <th>Process</th>
+                        <th>Amount</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- ERC20 history will be inserted here by JavaScript -->
+                </tbody>
+            </table>
+            <div id="v3c-pagination-controls">
+                <button id="v3c-prev-page" disabled>Prev</button>
+                <span id="v3c-page-info">Page 1</span>
+                <button id="v3c-next-page">Next</button>
+            </div>
+        </div>
+    </main>
+    <footer>
+        <p>&copy; 2025 Blockchain Browser</p>
+    </footer>
+    <script src="scripts/kbaddress.js"></script>
+    <script src="scripts/bundle.min.js"></script>
+</body>
+</html>

@@ -17,9 +17,13 @@ document.addEventListener('DOMContentLoaded', async function() {
             updateLogo(blockchainNetwork)
             if (blockchainNetwork.endsWith("TEST")) {
                 ticker = blockchainNetwork.slice(0, -4);
+            } else if (blockchainNetwork === 'KANBAN') {
+                ticker = 'FAB';
             } else {
                 ticker = blockchainNetwork;
             }
+            const searchnetwork = document.getElementById('search-network');
+            searchnetwork.value = blockchainNetwork;
         } catch (error) {
             //console.error('Error loading configuration:', error);
             return;
@@ -28,6 +32,7 @@ document.addEventListener('DOMContentLoaded', async function() {
 
     // Initial load
     await loadConfiguration();
+
     // Function to update the logo based on the selected network
     function updateLogo(network) {
         const logoImg = document.getElementById('logo-img');
@@ -46,6 +51,9 @@ document.addEventListener('DOMContentLoaded', async function() {
                 break;
             case 'FABTEST':
                 logoImg.src = 'assets/fab-logo-t.png';
+                break;
+            case 'KANBAN':
+                logoImg.src = 'assets/kanban.png';
                 break;
             default:
                 logoImg.src = 'assets/fab-logo-o.png';
@@ -86,9 +94,10 @@ document.addEventListener('DOMContentLoaded', async function() {
                 if (address.type && address.type !== '') {
                     addressTypeHtml = `<span class="address-type">${address.type ? ` ${address.type}` : ''}</span>`;
                 }
+                const addressLink = blockchainNetwork === 'KANBAN' ? 'kbaddress.html' : 'address.html';
                 return `
                 <tr>
-                    <td class="address"><a href="address.html?address=${address.address}&network=${blockchainNetwork}">${address.address}</a>${addressTypeHtml}</td>
+                    <td class="address"><a href="${addressLink}?address=${address.address}&network=${blockchainNetwork}">${address.address}</a>${addressTypeHtml}</td>
                     <td class="balance">${parseFloat(address.balance).toLocaleString('en-US', { minimumFractionDigits: 8, maximumFractionDigits: 8 })}</td>
                 </tr>
             `;

@@ -43,6 +43,9 @@ document.addEventListener('DOMContentLoaded', async function() {
             case 'FABTEST':
                 logoImg.src = 'assets/fab-logo-t.png';
                 break;
+            case 'KANBAN':
+                logoImg.src = 'assets/kanban.png';
+                break;
             default:
                 logoImg.src = 'assets/fab-logo-o.png';
         }

@@ -1,4 +1,3 @@
-bitcoin = require('bitcoinjs-lib');
 document.addEventListener('DOMContentLoaded', async function() {
     const urlParams = new URLSearchParams(window.location.search);
     const blockchainNetwork = urlParams.get('network') || 'FAB'; // Default to 'FAB' if not specified
@@ -54,7 +53,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                 break;
             case 'KANBAN':
                 logoImg.src = 'assets/kanban.png';
-                break;
+                break;    
             default:
                 logoImg.src = 'assets/fab-logo-o.png';
         }
@@ -76,13 +75,7 @@ document.addEventListener('DOMContentLoaded', async function() {
 
     // Function to convert address format
     function convertAddressFormat(address) {
-        if (!useBase58) {
-            const decoded = bitcoin.address.fromBase58Check(address);
-            return decoded.hash.toString('hex');
-        } else {
-            // Return Base58 format
-            return address;
-        }
+        return address;
     }
 
     // Function to load contracts
@@ -103,15 +96,15 @@ document.addEventListener('DOMContentLoaded', async function() {
                     infoHtml = `<span class="contract-info">${address.symbol}</span>`;
                 }
                 const shortTx = address.createtx.slice(0, 6) + '...' + address.createtx.slice(-6);
-                const creationTxHtml = `<a href="transaction.html?txid=${address.createtx}&network=${blockchainNetwork}">${shortTx}</a>`;
+                const creationTxHtml = `<a href="kbtransaction.html?txid=${address.createtx}&network=${blockchainNetwork}">${shortTx}</a>`;
                 const formattedAddress = convertAddressFormat(address.address);
                 let ownerHtml = '';
                 if (address.owner) {
-                    ownerHtml = `<a href="address.html?address=${address.owner}&network=${blockchainNetwork}">${address.owner}</a>`;
+                    ownerHtml = `<a href="kbaddress.html?address=${address.owner}&network=${blockchainNetwork}">${address.owner}</a>`;
                 }
                 return `
                 <tr>
-                    <td class="address"><a href="address.html?address=${address.address}&network=${blockchainNetwork}">${formattedAddress}</a>${addressTypeHtml}</td>
+                    <td class="address"><a href="kbaddress.html?address=${address.address}&network=${blockchainNetwork}">${formattedAddress}</a>${addressTypeHtml}</td>
                     <td class="info">${infoHtml}</td>
                     <td class="owner">${ownerHtml}</td>
                     <td class="creation-tx">${creationTxHtml}</td>
@@ -123,23 +116,23 @@ document.addEventListener('DOMContentLoaded', async function() {
         }
     }
 
-    // Function to load FRC20 tokens
-    async function loadFRC20Tokens(page = 1, pageSize = 20) {
+    // Function to load ERC20 tokens
+    async function loadERC20Tokens(page = 1, pageSize = 20) {
         if (tokenSymbol) {
-            const frc20Data = await fetchBlockchainData(`frc20/symbol/${tokenSymbol}?page=${page}&pageSize=${pageSize}`);
-            if (frc20Data) {
-                const frc20TableBody = document.querySelector('#frc20-table tbody');
-                const rows = frc20Data.map(token => {
+            const erc20Data = await fetchBlockchainData(`erc20/symbol/${tokenSymbol}?page=${page}&pageSize=${pageSize}`);
+            if (erc20Data) {
+                const erc20TableBody = document.querySelector('#erc20-table tbody');
+                const rows = erc20Data.map(token => {
                     const shortTx = token.createtx.slice(0, 6) + '...' + token.createtx.slice(-6);
-                    const creationTxHtml = `<a href="transaction.html?txid=${token.createtx}&network=${blockchainNetwork}">${shortTx}</a>`;
+                    const creationTxHtml = `<a href="kbtransaction.html?txid=${token.createtx}&network=${blockchainNetwork}">${shortTx}</a>`;
                     const formattedAddress = convertAddressFormat(token.address);
                     let ownerHtml = '';
                     if (token.owner) {
-                        ownerHtml = `<a href="address.html?address=${token.owner}&network=${blockchainNetwork}">${token.owner}</a>`;
+                        ownerHtml = `<a href="kbaddress.html?address=${token.owner}&network=${blockchainNetwork}">${token.owner}</a>`;
                     }
                     return `
                     <tr>
-                        <td class="address"><a href="address.html?address=${token.address}&network=${blockchainNetwork}">${formattedAddress}</a></td>
+                        <td class="address"><a href="kbaddress.html?address=${token.address}&network=${blockchainNetwork}">${formattedAddress}</a></td>
                         <td class="symbol">${token.symbol}</td>
                         <td class="name">${token.name}</td>
                         <td class="owner">${ownerHtml}</td>
@@ -147,24 +140,24 @@ document.addEventListener('DOMContentLoaded', async function() {
                     </tr>
                 `;
                 }).join('');
-                frc20TableBody.innerHTML = rows;
-                updateFRC20PaginationControls(page, frc20Data.length, pageSize);
+                erc20TableBody.innerHTML = rows;
+                updateERC20PaginationControls(page, erc20Data.length, pageSize);
             }
         } else {
-            const frc20Data = await fetchBlockchainData(`frc20tokens?page=${page}&pageSize=${pageSize}`);
-            if (frc20Data) {
-                const frc20TableBody = document.querySelector('#frc20-table tbody');
-                const rows = frc20Data.map(token => {
+            const erc20Data = await fetchBlockchainData(`erc20tokens?page=${page}&pageSize=${pageSize}`);
+            if (erc20Data) {
+                const erc20TableBody = document.querySelector('#erc20-table tbody');
+                const rows = erc20Data.map(token => {
                     const shortTx = token.createtx.slice(0, 6) + '...' + token.createtx.slice(-6);
-                    const creationTxHtml = `<a href="transaction.html?txid=${token.createtx}&network=${blockchainNetwork}">${shortTx}</a>`;
+                    const creationTxHtml = `<a href="kbtransaction.html?txid=${token.createtx}&network=${blockchainNetwork}">${shortTx}</a>`;
                     const formattedAddress = convertAddressFormat(token.address);
                     let ownerHtml = '';
                     if (token.owner) {
-                        ownerHtml = `<a href="address.html?address=${token.owner}&network=${blockchainNetwork}">${token.owner}</a>`;
+                        ownerHtml = `<a href="kbaddress.html?address=${token.owner}&network=${blockchainNetwork}">${token.owner}</a>`;
                     }
                     return `
                     <tr>
-                        <td class="address"><a href="address.html?address=${token.address}&network=${blockchainNetwork}">${formattedAddress}</a></td>
+                        <td class="address"><a href="kbaddress.html?address=${token.address}&network=${blockchainNetwork}">${formattedAddress}</a></td>
                         <td class="symbol">${token.symbol}</td>
                         <td class="name">${token.name}</td>
                         <td class="owner">${ownerHtml}</td>
@@ -172,8 +165,8 @@ document.addEventListener('DOMContentLoaded', async function() {
                     </tr>
                 `;
                 }).join('');
-                frc20TableBody.innerHTML = rows;
-                updateFRC20PaginationControls(page, frc20Data.length, pageSize);
+                erc20TableBody.innerHTML = rows;
+                updateERC20PaginationControls(page, erc20Data.length, pageSize);
             }
         }
     }
@@ -189,11 +182,11 @@ document.addEventListener('DOMContentLoaded', async function() {
         pageInfo.textContent = `${page}`;
     }
 
-    // Function to update FRC20 pagination controls
-    function updateFRC20PaginationControls(page, dataLength, pageSize) {
-        const prevPageButton = document.getElementById('frc20-prev-page');
-        const nextPageButton = document.getElementById('frc20-next-page');
-        const pageInfo = document.getElementById('frc20-page-info');
+    // Function to update ERC20 pagination controls
+    function updateERC20PaginationControls(page, dataLength, pageSize) {
+        const prevPageButton = document.getElementById('erc20-prev-page');
+        const nextPageButton = document.getElementById('erc20-next-page');
+        const pageInfo = document.getElementById('erc20-page-info');
 
         prevPageButton.disabled = page === 1;
         nextPageButton.disabled = dataLength < pageSize;
@@ -219,25 +212,25 @@ document.addEventListener('DOMContentLoaded', async function() {
         });
     }
 
-    const frc20PrevPageButton = document.getElementById('frc20-prev-page');
-    if (frc20PrevPageButton) {
-        frc20PrevPageButton.addEventListener('click', () => {
+    const erc20PrevPageButton = document.getElementById('erc20-prev-page');
+    if (erc20PrevPageButton) {
+        erc20PrevPageButton.addEventListener('click', () => {
             if (currentPage > 1) {
                 currentPage--;
-                loadFRC20Tokens(currentPage, pageSize);
+                loadERC20Tokens(currentPage, pageSize);
             }
         });
     }
 
-    const frc20NextPageButton = document.getElementById('frc20-next-page');
-    if (frc20NextPageButton) {
-        frc20NextPageButton.addEventListener('click', () => {
+    const erc20NextPageButton = document.getElementById('erc20-next-page');
+    if (erc20NextPageButton) {
+        erc20NextPageButton.addEventListener('click', () => {
             currentPage++;
-            loadFRC20Tokens(currentPage, pageSize);
+            loadERC20Tokens(currentPage, pageSize);
         });
     }
 
-    document.getElementById('logo-link').href = `../index.html?network=${blockchainNetwork}`;
+    document.getElementById('logo-link').href = `../kanban.html?network=${blockchainNetwork}`;
 
     // Tab switching logic
     document.querySelectorAll('.tab-button').forEach(button => {
@@ -251,9 +244,9 @@ document.addEventListener('DOMContentLoaded', async function() {
             if (button.dataset.tab === 'contracts') {
                 currentPage = 1;
                 loadContracts(currentPage, pageSize);
-            } else if (button.dataset.tab === 'frc20') {
+            } else if (button.dataset.tab === 'erc20') {
                 currentPage = 1;
-                loadFRC20Tokens(currentPage, pageSize);
+                loadERC20Tokens(currentPage, pageSize);
             }
         });
     });
@@ -267,21 +260,21 @@ document.addEventListener('DOMContentLoaded', async function() {
             const activeTab = document.querySelector('.tab-button.active').dataset.tab;
             if (activeTab === 'contracts') {
                 loadContracts(currentPage, pageSize);
-            } else if (activeTab === 'frc20') {
-                loadFRC20Tokens(currentPage, pageSize);
+            } else if (activeTab === 'erc20') {
+                loadERC20Tokens(currentPage, pageSize);
             }
         });
     }
 
     // Initialize the page by loading the first page of contracts
     if (tokenSymbol) {
-        const frc20Tab = document.querySelector('.tab-button[data-tab="frc20"]');
-        const frc20TabContent = document.getElementById('frc20-tab');
-        if (frc20Tab && frc20TabContent) {
-            frc20Tab.click();
-            frc20Tab.classList.add('active');
-            frc20TabContent.classList.add('active');
-            loadFRC20Tokens(currentPage, pageSize);
+        const erc20Tab = document.querySelector('.tab-button[data-tab="erc20"]');
+        const erc20TabContent = document.getElementById('erc20-tab');
+        if (erc20Tab && erc20TabContent) {
+            erc20Tab.click();
+            erc20Tab.classList.add('active');
+            erc20TabContent.classList.add('active');
+            loadERC20Tokens(currentPage, pageSize);
         }
     } else {
         const contractsTab = document.querySelector('.tab-button[data-tab="contracts"]');

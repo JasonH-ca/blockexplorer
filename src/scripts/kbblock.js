@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', async function() {
     const urlParams = new URLSearchParams(window.location.search);
-    const blockchainNetwork = urlParams.get('network') || 'FAB'; // Default to 'FAB' if not specified
+    const blockchainNetwork = urlParams.get('network') || 'KANBAN'; // Default to 'KANBAN' if not specified
     let ticker;
 
     let apiUrl;
@@ -45,7 +45,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                 break;
             case 'KANBAN':
                 logoImg.src = 'assets/kanban.png';
-                break;
+                break;        
             default:
                 logoImg.src = 'assets/fab-logo-o.png';
         }
@@ -85,51 +85,42 @@ document.addEventListener('DOMContentLoaded', async function() {
 
         if (blockData) {
             const blockInfoDiv = document.getElementById('block-info');
-            const previousBlockExists = blockData.height > 0;
-            const nextBlockExists = await fetchBlockchainData(`block/${blockData.height + 1}`);
+            const previousBlockExists = parseInt(blockData.number, 16) > 0;
+            const nextBlockExists = true;
+
             blockInfoDiv.innerHTML = `
                 <div id="block-navigation">
-                    ${previousBlockExists ? `<a href="block.html?blockNumber=${blockData.height - 1}&network=${blockchainNetwork}">${(blockData.height - 1).toLocaleString()}</a>` : ''} |
-                    ${nextBlockExists ? `<a href="block.html?blockNumber=${blockData.height + 1}&network=${blockchainNetwork}">${(blockData.height + 1).toLocaleString()}</a>` : ''}
+                    ${previousBlockExists ? `<a href="kbblock.html?blockNumber=${parseInt(blockData.number,16) - 1}&network=${blockchainNetwork}">${(parseInt(blockData.number,16) - 1).toLocaleString()}</a>` : ''} |
+                    ${nextBlockExists ? `<a href="kbblock.html?blockNumber=${parseInt(blockData.number,16) + 1}&network=${blockchainNetwork}">${(parseInt(blockData.number,16) + 1).toLocaleString()}</a>` : ''}
                 </div>
                 <table id="block-info-table">
                     <tr>
                         <th>Height</th>
-                        <td>${blockData.height.toLocaleString()}</td>
-                    </tr>
-                    <tr>
-                        <th>Confirmations</th>
-                        <td>${blockData.confirmations.toLocaleString()}</td>
+                        <td>${parseInt(blockData.number,16).toLocaleString()}</td>
                     </tr>
                     <tr>
                         <th>Hash</th>
                         <td>
-                            <span class="block-hash">
-                                ${blockData.hash}
-                                <button id="copy-button"><i class="fas fa-copy"></i></button>
-                            </span>
+                            ${blockData.hash}
+                            <button id="copy-button"><i class="fas fa-copy"></i></button>
                         </td>
                     </tr>
                     <tr>
                         <th>Time</th>
-                        <td>${new Date(blockData.time * 1000).toLocaleString()}</td>
+                        <td>${new Date(parseInt(blockData.timestamp, 16) * 1000).toLocaleString()}</td>
                     </tr>
                     <tr>
                         <th>Transactions</th>
-                        <td>${blockData.tx.length.toLocaleString()}</td>
+                        <td>${blockData.transactions.length.toLocaleString()}</td>
                     </tr>
                     <tr>
                         <th>Size</th>
-                        <td>${blockData.size.toLocaleString()} bytes</td>
-                    </tr>
-                    <tr>
-                        <th>Difficulty</th>
-                        <td>${parseFloat(blockData.difficulty).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+                        <td>${parseInt(blockData.size,16).toLocaleString()} bytes</td>
                     </tr>
                 </table>
                 <h3>Transactions</h3>
                 <ul id="transaction-list">
-                    ${blockData.tx.map(txid => `<li><a href="transaction.html?txid=${txid}&network=${blockchainNetwork}">${txid}</a></li>`).join('')}
+                    ${blockData.transactions.map(tx => `<li><a href="kbtransaction.html?txid=${tx.hash}&network=${blockchainNetwork}" class="monospace">${tx.hash}</a></li>`).join('')}
                 </ul>
             `;
 
@@ -146,7 +137,7 @@ document.addEventListener('DOMContentLoaded', async function() {
         }
     }
 
-    document.getElementById('logo-link').href = `../index.html?network=${blockchainNetwork}`;
+    document.getElementById('logo-link').href = `../kanban.html?network=${blockchainNetwork}`;
 
     // Load block details on the block detail page
     loadBlockDetails();

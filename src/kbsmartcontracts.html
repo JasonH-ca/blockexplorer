@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Contracts</title>
+    <link rel="stylesheet" href="styles/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">    
+</head>
+<body>
+    <header>
+        <div id="logo">
+            <a id="logo-link" href="#">
+                <img id="logo-img" src="assets/fab-logo-o.png" alt="Logo">
+            </a>
+        </div>
+        <div id="search-container">
+            <input type="text" id="search-field" placeholder="block number, block hash, txid, or address...">
+            <input type="hidden" id="search-network" value="KANBAN"> <!-- Hidden input for network -->
+            <button id="search-button"><i class="fas fa-search"></i></button>
+        </div>
+    </header>
+    <main>
+        <h2>Smart Contracts</h2>
+        <div class="tabs">
+            <button class="tab-button active" data-tab="contracts">All</button>
+            <button class="tab-button" data-tab="erc20">ERC20</button>
+            <div class="checkbox-container">
+                <input type="checkbox" id="address-format" name="address-format" checked>
+                <label for="address-format">Base58</label>
+            </div>
+        </div>
+        <div id="contracts-tab" class="tab-content active">
+            <table id="contracts-table" class="styled-table">
+                <thead>
+                    <tr>
+                        <th>Address</th>
+                        <th>Symbol</th>
+                        <th>Owner</th>
+                        <th>Creation Tx</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Top addresses will be inserted here by JavaScript -->
+                </tbody>
+            </table>
+            <div id="pagination-controls">
+                <button id="prev-page" disabled>Prev</button>
+                <span id="page-info">Page 1</span>
+                <button id="next-page">Next</button>
+            </div>
+        </div>
+        <div id="erc20-tab" class="tab-content">
+            <table id="erc20-table" class="styled-table">
+                <thead>
+                    <tr>
+                        <th>Address</th>
+                        <th>Symbol</th>
+                        <th>Name</th>
+                        <th>Owner</th>
+                        <th>Creation Tx</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- ERC20 tokens will be inserted here by JavaScript -->
+                </tbody>
+            </table>
+            <div id="erc20-pagination-controls">
+                <button id="erc20-prev-page" disabled>Prev</button>
+                <span id="erc20-page-info">Page 1</span>
+                <button id="erc20-next-page">Next</button>
+            </div>
+        </div>
+    </main>
+    <footer>
+        <p>&copy; 2025 Blockchain Browser</p>
+    </footer>
+    <script src="scripts/kbsmartcontracts.js"></script>
+    <script src="scripts/bundle.min.js"></script>
+</body>
+</html>

@@ -2,7 +2,7 @@
 
 document.addEventListener('DOMContentLoaded', async function() {
     const urlParams = new URLSearchParams(window.location.search);
-    let blockchainNetwork = urlParams.get('network') || 'FAB'; // Default to 'FAB' if not specified
+    let blockchainNetwork = urlParams.get('network') || 'KANBAN'; // Default to 'FAB' if not specified
     let apiUrl;
     let currentBlockHeight = null;
     let initialBlockHeight = null;
@@ -37,6 +37,8 @@ document.addEventListener('DOMContentLoaded', async function() {
             // Navigate to kanban.html if KANBAN is selected
             if (selectedNetwork === 'KANBAN') {
                 window.location.href = 'kanban.html';
+            } else {
+                window.location.href = 'index.html?network=' + selectedNetwork;
             }
         });
 
@@ -58,6 +60,8 @@ document.addEventListener('DOMContentLoaded', async function() {
             // Navigate to kanban.html if KANBAN is selected
             if (selectedNetwork === 'KANBAN') {
                 window.location.href = 'kanban.html';
+            } else {
+                window.location.href = 'index.html?network=' + selectedNetwork;
             }
         });
     });
@@ -72,11 +76,6 @@ document.addEventListener('DOMContentLoaded', async function() {
     document.querySelector('.dropbtn').addEventListener('touchend', toggleDropdown);
 
     async function loadConfiguration() {
-        // Navigate to kanban.html if KANBAN is selected
-        if (blockchainNetwork === 'KANBAN') {
-            window.location.href = 'kanban.html';
-        }
-
         try {
             const response = await fetch('./src/config/environment.json');
             const config = await response.json();
@@ -113,7 +112,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                 break;
             case 'KANBAN':
                 logoImg.src = 'src/assets/kanban.png';
-                break;
+                break;    
             default:
                 logoImg.src = 'src/assets/fab-logo-o.png';
         }
@@ -194,7 +193,7 @@ document.addEventListener('DOMContentLoaded', async function() {
         if (blockDataBatch) {
             blockDataBatch.forEach(blockData => {
                 const row = document.createElement('tr');
-                const blockTime = new Date(blockData.time * 1000);
+                const blockTime = new Date(parseInt(blockData.timestamp, 16) * 1000);
                 const now = new Date();
                 const timeDifference = now - blockTime;
                 const oneDay = 24 * 60 * 60 * 1000;
@@ -203,10 +202,10 @@ document.addEventListener('DOMContentLoaded', async function() {
                     ? blockTime.toLocaleString()
                     : `${timeSince(blockTime)} ago`;
                 row.innerHTML = `
-                    <td><a href="src/block.html?blockNumber=${blockData.height}&network=${blockchainNetwork}">${blockData.height.toLocaleString()}</a></td>
-                    <td data-time="${blockData.time}">${formattedTime}</td>
-                    <td>${blockData.tx.length}</td>
-                    <td class="size">${blockData.size.toLocaleString()}</td>
+                    <td><a href="src/kbblock.html?blockNumber=${parseInt(blockData.number,16)}&network=${blockchainNetwork}">${parseInt(blockData.number,16).toLocaleString()}</a></td>
+                    <td data-time="${blockData.timestamp}">${formattedTime}</td>
+                    <td>${blockData.transactions.length}</td>
+                    <td class="size">${parseInt(blockData.size,16).toLocaleString()}</td>
                 `;
                 newRows.push(row);
             });
@@ -286,25 +285,25 @@ document.addEventListener('DOMContentLoaded', async function() {
         }
     }, 1000);
 
-    // Check the chaintip every minute
+    // Check the chaintip every 2 seconds
     setInterval(() => {
         if (document.querySelector('#blocks-table') && isViewingLatestBlocks) {
             loadChainTip();
         }
-    }, 60000);
+    }, 2000);
 
     // Update the href attributes in the HTML
     function updateLinks() {
-        document.getElementById('logo-link').href = `index.html?network=${blockchainNetwork}`;
+        document.getElementById('logo-link').href = `kanban.html?network=${blockchainNetwork}`;
         document.getElementById('top-addresses-link').href = `src/top-addresses.html?network=${blockchainNetwork}`;
-        document.getElementById('smart-contract-link').href = `src/smartcontracts.html?network=${blockchainNetwork}`;
+        document.getElementById('smart-contract-link').href = `src/kbsmartcontracts.html?network=${blockchainNetwork}`;
     }
 
     // Initial link update
     updateLinks();
 
     // Show Smart Contract link if the current network is FAB or FABTEST
-    if (blockchainNetwork === 'FAB' || blockchainNetwork === 'FABTEST') {
+    if (blockchainNetwork === 'FAB' || blockchainNetwork === 'FABTEST' || blockchainNetwork === 'KANBAN') {
         const smartContractLink = document.getElementById('smart-contract-link');
         smartContractLink.style.display = 'inline';
     } else {

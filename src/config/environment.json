@@ -7,14 +7,16 @@
             "LTC": "https://api.gotrust.me:3000/",
             "DOGE": "https://api.gotrust.me:3000/",
             "BCH": "https://api.gotrust.me:3000/",
-            "BTC": "http://192.168.10.116:3000/"
+            "BTC": "http://192.168.10.116:3000/",
+            "KANBAN": "https://api.gotrust.me:3000/"
         },
         "debug": {
             "FAB": "http://127.0.0.1:3000/",
             "LTC": "http://127.0.0.1:3000/",
             "DOGE": "http://127.0.0.1:3000/",
             "BCH": "http://127.0.0.1:3000/",
-            "BTC": "http://127.0.0.1:3000/"
+            "BTC": "http://127.0.0.1:3000/",
+            "KANBAN": "http://127.0.0.1:3000/"
         }
     }
 }

@@ -260,24 +260,47 @@ nav ul li a {
     width: 50%;
 }
 
-#blocks-table {
+#blocks-and-transactions {
+    display: flex;
+    align-items: stretch; /* Ensure both tables stretch to the same height */
+    gap: 20px; /* Add space between the two tables */
+}
+
+#blocks-container, #transactions-container {
+    flex: 1; /* Ensure both containers take equal height */
+    display: flex;
+    flex-direction: column; /* Ensure the content inside stretches properly */
+    margin: 0;
+    padding: 0;
+    min-height: 400px; /* Set a minimum height for both containers */
+}
+
+#transactions-container {
+    width: 100%; /* Ensure the transactions container takes full width */
+}
+#blocks-container {
+    width: 100%; /* Ensure the blocks container takes full width */
+}
+
+#blocks-table, #transactions-table {
     width: 400px;
     border-collapse: collapse;
     margin-bottom: 20px;
 }
 
-#blocks-table th, #blocks-table td {
+#blocks-table th, #blocks-table td, #transactions-table th, #transactions-table td {
     padding: 5px 10px; /* Adjust column spacing */
     border: 1px solid #ddd;
     text-align: left;
     line-height: 1.0; /* Adjust line spacing */
 }
 
-#blocks-table th {
+#blocks-table th, #transactions-table th {
     background-color: #f4f4f4;
+    white-space: nowrap; /* Prevent text wrapping in headers */
 }
 
-#blocks-table td.size {
+#blocks-table td.size, #transactions-table td.size {
     width: 20%; /* Adjust column width */
     text-align: right;
 }
@@ -285,33 +308,7 @@ nav ul li a {
 #button-container {
     display: flex;
     justify-content: flex-start; /* Align buttons to the left */
-    margin-top: 20px;
-}
-
-#prev-button, #next-button {
-    padding: 10px 20px;
-}
-
-/* Styles for the button container */
-#button-container {
-    display: flex;
-    justify-content: flex-start; /* Align buttons to the left */
-    margin-top: 20px;
-}
-
-/* Styles for the buttons */
-#button-container button {
-    margin-right: 10px; /* Add some space between the buttons */
-    padding: 10px 20px;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-}
-
-#button-container button:hover {
-    background-color: #007bff;
+    margin-top: 0px;
 }
 
 /* Styles for block information table */

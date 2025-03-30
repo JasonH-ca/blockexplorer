@@ -8,6 +8,8 @@ document.addEventListener('DOMContentLoaded', async function() {
     let initialBlockHeight = null;
     let isViewingLatestBlocks = true;
     let previousChaintip = null;
+    let currentTransactionPage = 1; // Track the current page for transactions
+    const transactionsPageSize = 20; // Number of transactions per page
 
     // Function to set the network based on dropdown selection
     function setNetwork(network) {
@@ -233,28 +235,58 @@ document.addEventListener('DOMContentLoaded', async function() {
             initialBlockHeight = chaintip.blockNumber;
             loadBlocks(currentBlockHeight);
             previousChaintip = chaintip.blockNumber;
-            //loadLatestTransactions();
+            loadLatestTransactions();
         }
     }
 
     // Function to load the latest transactions
-    async function loadLatestTransactions() {
-        const latestTransactions = await fetchBlockchainData('latest-transactions');
-        if (latestTransactions) {
+    async function loadLatestTransactions(page = 1) {
+        try {
+            const transactionsData = await fetchBlockchainData(`history?page=${page}&pageSize=${transactionsPageSize}`);
             const transactionsList = document.getElementById('transactions-list');
-            const newItems = [];
+            if (!transactionsList) {
+                console.error('Error: #transactions-list element not found in the DOM.');
+                return;
+            }
+            transactionsList.innerHTML = transactionsData.map(tx => `
+                <tr>
+                    <td>
+                        <a href="src/transaction.html?txid=${tx.txHash}&network=${blockchainNetwork}">
+                            ${tx.txHash.slice(0, 6)}...${tx.txHash.slice(-6)}
+                        </a>
+                    </td>
+                    <td>
+                        <a href="src/block.html?blockNumber=${tx.blockNumber}&network=${blockchainNetwork}">
+                            ${tx.blockNumber.toLocaleString()}
+                        </a>
+                    </td>
+                </tr>
+            `).join('');
+        } catch (error) {
+            console.error('Error fetching latest transactions:', error);
+        }
 
-            latestTransactions.forEach(transaction => {
-                const listItem = document.createElement('li');
-                listItem.innerHTML = `<a href="transaction.html?txid=${transaction.txid}&network=${blockchainNetwork}">${transaction.txid}</a>`;
-                newItems.push(listItem);
-            });
-
-            // Update the list without flashing
-            transactionsList.innerHTML = '';
-            newItems.forEach(item => transactionsList.appendChild(item));
+        // Show or hide the "Prev" button based on the current block height
+        const prevButton = document.getElementById('prev-transactions-button');
+        if (currentTransactionPage == 1) {
+            prevButton.style.display = 'none';
+        } else {
+            prevButton.style.display = 'inline-block';
         }
     }
+
+    // Event listeners for transaction pagination
+    document.getElementById('next-transactions-button').addEventListener('click', function () {
+        currentTransactionPage++;
+        loadLatestTransactions(currentTransactionPage);
+    });
+
+    document.getElementById('prev-transactions-button').addEventListener('click', function () {
+        if (currentTransactionPage > 1) {
+            currentTransactionPage--;
+            loadLatestTransactions(currentTransactionPage);
+        }
+    });
 
     // Load the latest blocks on the homepage
     if (document.querySelector('#blocks-table')) {

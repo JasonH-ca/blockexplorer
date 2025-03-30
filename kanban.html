@@ -39,23 +39,48 @@
     </header>
     <div id="content">
         <div id="main-content">
-            <h2>Latest 20 Blocks</h2>
-            <table id="blocks-table">
-                <thead>
-                    <tr>
-                        <th>Height</th>
-                        <th>Time</th>
-                        <th>Tx</th>
-                        <th>Size (bytes)</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <!-- Block data will be inserted here by JavaScript -->
-                </tbody>
-            </table>
-            <div id="button-container">
-                <button id="prev-button" style="display: none;">Prev</button>
-                <button id="next-button">Next</button>
+            <div id="blocks-and-transactions">
+                <!-- Blocks Table -->
+                <div id="blocks-container">
+                    <h2>Latest 20 Blocks</h2>
+                    <table id="blocks-table">
+                        <thead>
+                            <tr>
+                                <th>Height</th>
+                                <th>Time</th>
+                                <th>Tx</th>
+                                <th>Size (bytes)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Block data will be dynamically inserted here -->
+                        </tbody>
+                    </table>
+                    <div id="button-container">
+                        <button id="prev-button" style="display: none;">Prev</button>
+                        <button id="next-button">Next</button>
+                    </div>
+                </div>
+
+                <!-- Transactions List -->
+                <div id="transactions-container">
+                    <h2>Latest 20 Transactions</h2>
+                    <table id="transactions-table">
+                        <thead>
+                            <tr>
+                                <th>TxHash</th>
+                                <th>Block</th>
+                            </tr>
+                        </thead>
+                        <tbody id="transactions-list">
+                            <!-- Transaction data will be dynamically inserted here -->
+                        </tbody>
+                    </table>
+                    <div id="transactions-pagination">
+                        <button id="prev-transactions-button" style="display: none;">Prev</button>
+                        <button id="next-transactions-button">Next</button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

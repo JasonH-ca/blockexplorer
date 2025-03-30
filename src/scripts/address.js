@@ -367,33 +367,44 @@ document.addEventListener('DOMContentLoaded', async function() {
             // Get transaction time
             const transactionTime = new Date(transactionDetails.time * 1000).toLocaleString();
 
-            // Filter out coinbase transactions from vin and get amount
+            // Calculate total vin amount
+            let totalVinAmount = 0;
             const vinPromises = transactionDetails.vin
                 .filter(vin => !vin.coinbase)
                 .map(async vin => {
                     const vinDetails = await fetchBlockchainData(`transaction/${vin.txid}`);
                     const vinAddress = vinDetails.vout[vin.vout].scriptPubKey.addresses ? vinDetails.vout[vin.vout].scriptPubKey.addresses.join(', ') : 'n/a';
                     const vinAmount = vinDetails.vout[vin.vout].value;
-                    if (vinAddress !== specificAddress) return ''; // Skip if address is different
-                    return `
-                        <div>
-                            <p>-${parseFloat(vinAmount).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 8 })} ${ticker}</p>
-                        </div>
-                    `;
+                    if (vinAddress === specificAddress) {
+                        totalVinAmount += vinAmount; // Add to total vin amount
+                        return `
+                            <div>
+                                <p>-${parseFloat(vinAmount).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 8 })} ${ticker}</p>
+                            </div>
+                        `;
+                    }
+                    return '';
                 });
 
             const vin = (await Promise.all(vinPromises)).join('');
 
+            // Calculate total vout amount
+            let totalVoutAmount = 0;
+            let totalVout = 0;
             const vout = transactionDetails.vout
                 .filter(vout => vout.value > 0) // Filter out zero amount vout
                 .map(vout => {
                     const voutAddress = vout.scriptPubKey.addresses ? vout.scriptPubKey.addresses.join(', ') : 'n/a';
-                    if (voutAddress !== specificAddress) return ''; // Skip if address is different
-                    return `
-                        <div class="vout">
-                            <p>+${parseFloat(vout.value).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 8 })} ${ticker}</p>
-                        </div>
-                    `;
+                    if (voutAddress === specificAddress) {
+                        totalVoutAmount += vout.value; // Add to total vout amount
+                        totalVout++;
+                        return `
+                            <div>
+                                <p>+${parseFloat(vout.value).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 8 })} ${ticker}</p>
+                            </div>
+                        `;
+                    }
+                    return '';
                 }).join('');
 
             row.innerHTML = `
@@ -406,8 +417,37 @@ document.addEventListener('DOMContentLoaded', async function() {
                         <span class="greyed-out">Confirmations </span>
                         <span class="black-text">${transactionDetails.confirmations.toLocaleString()}</span>
                     </div>
-                    <div class="vin">${vin}</div>
-                    <div class="vout">${vout}</div>
+                    <div class="vin" style="color: ${totalVinAmount !== 0 ? 'grey' : 'inherit'};">
+                        ${vin}
+                    </div>
+                    <div class="vout" style="color: ${totalVinAmount !== 0 || totalVout > 1 ? 'grey' : 'green'};">
+                        ${vout}
+                    </div>
+                    <div class="totals" style="text-align: right;">
+                        ${
+                            totalVinAmount !== 0
+                                ? `
+                                    <hr style="border: 1px solid grey; width: 200px; display: inline-block;">
+                                    <p style="color: red; text-align: right;">
+                                        ${(totalVoutAmount - totalVinAmount).toLocaleString(
+                                            'en-US',
+                                            { minimumFractionDigits: 0, maximumFractionDigits: 8 }
+                                        )} ${ticker}
+                                    </p>
+                                `
+                                : totalVoutAmount > 0 && totalVout > 1
+                                ? `
+                                    <hr style="border: 1px solid grey; width: 200px; display: inline-block; margin-left: auto;">
+                                    <p style="color: green; text-align: right;">
+                                        ${'+' + totalVoutAmount.toLocaleString(
+                                            'en-US',
+                                            { minimumFractionDigits: 0, maximumFractionDigits: 8 }
+                                        )} ${ticker}
+                                    </p>
+                                `
+                                : ''
+                        }
+                    </div>
                 </td>
             `;
             tbody.appendChild(row);

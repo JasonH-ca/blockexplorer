@@ -638,7 +638,7 @@ nav ul li a {
 /* Existing styles... */
 
 /* When the screen width is enough, put search at the right of the menu */
-@media (min-width: 850px) {
+@media (min-width: 1050px) {
     nav {
         display: flex;
         justify-content: space-between;
@@ -650,7 +650,7 @@ nav ul li a {
 }
 
 /* When the screen width is narrow, put search below the menu */
-@media (max-width: 849px) {
+@media (max-width: 1050px) {
     nav {
         display: flex;
         flex-direction: column;
@@ -659,6 +659,17 @@ nav ul li a {
         display: flex;        
         margin-left: 12px;
         margin-top: 10px;
+    }
+}
+
+/* When the screen width is narrow, stack the tables vertically */
+@media (max-width: 768px) {
+    #blocks-and-transactions {
+        flex-direction: column; /* Stack the tables vertically */
+    }
+
+    #transactions-container {
+        margin-top: 20px; /* Add spacing between the two tables */
     }
 }
 

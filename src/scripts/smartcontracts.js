@@ -1,4 +1,3 @@
-bitcoin = require('bitcoinjs-lib');
 document.addEventListener('DOMContentLoaded', async function() {
     const urlParams = new URLSearchParams(window.location.search);
     const blockchainNetwork = urlParams.get('network') || 'FAB'; // Default to 'FAB' if not specified
@@ -74,17 +73,6 @@ document.addEventListener('DOMContentLoaded', async function() {
         }
     }
 
-    // Function to convert address format
-    function convertAddressFormat(address) {
-        if (!useBase58) {
-            const decoded = bitcoin.address.fromBase58Check(address);
-            return decoded.hash.toString('hex');
-        } else {
-            // Return Base58 format
-            return address;
-        }
-    }
-
     // Function to load contracts
     async function loadContracts(page = 1, pageSize = 20) {
         if (tokenSymbol) {
@@ -104,7 +92,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                 }
                 const shortTx = address.createtx.slice(0, 6) + '...' + address.createtx.slice(-6);
                 const creationTxHtml = `<a href="transaction.html?txid=${address.createtx}&network=${blockchainNetwork}">${shortTx}</a>`;
-                const formattedAddress = convertAddressFormat(address.address);
+                const formattedAddress = convertAddressFormat(address.address, useBase58);
                 let ownerHtml = '';
                 if (address.owner) {
                     ownerHtml = `<a href="address.html?address=${address.owner}&network=${blockchainNetwork}">${address.owner}</a>`;
@@ -132,7 +120,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                 const rows = frc20Data.map(token => {
                     const shortTx = token.createtx.slice(0, 6) + '...' + token.createtx.slice(-6);
                     const creationTxHtml = `<a href="transaction.html?txid=${token.createtx}&network=${blockchainNetwork}">${shortTx}</a>`;
-                    const formattedAddress = convertAddressFormat(token.address);
+                    const formattedAddress = convertAddressFormat(token.address, useBase58);
                     let ownerHtml = '';
                     if (token.owner) {
                         ownerHtml = `<a href="address.html?address=${token.owner}&network=${blockchainNetwork}">${token.owner}</a>`;
@@ -157,7 +145,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                 const rows = frc20Data.map(token => {
                     const shortTx = token.createtx.slice(0, 6) + '...' + token.createtx.slice(-6);
                     const creationTxHtml = `<a href="transaction.html?txid=${token.createtx}&network=${blockchainNetwork}">${shortTx}</a>`;
-                    const formattedAddress = convertAddressFormat(token.address);
+                    const formattedAddress = convertAddressFormat(token.address, useBase58);
                     let ownerHtml = '';
                     if (token.owner) {
                         ownerHtml = `<a href="address.html?address=${token.owner}&network=${blockchainNetwork}">${token.owner}</a>`;

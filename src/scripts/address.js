@@ -1,4 +1,3 @@
-bitcoin = require('bitcoinjs-lib');
 document.addEventListener('DOMContentLoaded', async function() {
     let apiUrl;
     const urlParams = new URLSearchParams(window.location.search);
@@ -11,16 +10,6 @@ document.addEventListener('DOMContentLoaded', async function() {
     let frc20TotalSupply = null;
     let currentPage = 1; // Track the current page
     const pageSize = 10; // Define the page size
-
-    // Function to convert address format
-    function convertAddressFormat(address) {
-        if (!useBase58) {
-            const decoded = bitcoin.address.fromBase58Check(address);
-            return decoded.hash.toString('hex');
-        } else {
-            return address;
-        }
-    }
 
     try {
         const response = await fetch('./config/environment.json');
@@ -131,8 +120,8 @@ document.addEventListener('DOMContentLoaded', async function() {
             if (!myToken) {
                 myToken = await fetchTokenSymbol(item.contract);
             }
-            const from = convertAddressFormat(item.from);
-            const to = convertAddressFormat(item.to);
+            const from = convertAddressFormat(item.from, useBase58);
+            const to = convertAddressFormat(item.to, useBase58);
             const shortTxHash = item.txHash.slice(0, 6) + '...' + item.txHash.slice(-6);
             const shortFromAddress = from.slice(0, 6) + '...' + from.slice(-6);
             const shortToAddress = to.slice(0, 6) + '...' + to.slice(-6);
@@ -182,7 +171,7 @@ document.addEventListener('DOMContentLoaded', async function() {
         frc20HoldersData.forEach((item, index) => {
             const rank = (page - 1) * pageSize + index + 1;
             const percentage = (parseFloat(item.balance) / totalSupply) * 100;
-            const converted = convertAddressFormat(item.address);
+            const converted = convertAddressFormat(item.address, useBase58);
 
             const row = document.createElement('tr');
             row.innerHTML = `
@@ -199,7 +188,7 @@ document.addEventListener('DOMContentLoaded', async function() {
         const address = getQueryParam('address');
         const loadingSpinner = document.getElementById('loading-spinner');
         if (address) {
-            const formattedAddress = convertAddressFormat(address);
+            const formattedAddress = convertAddressFormat(address, useBase58);
             document.getElementById('address').textContent = formattedAddress;
 
             // Show loading spinner
@@ -245,7 +234,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                                 const option = document.createElement('option');
                                 option.value = balance.contract;
                                 option.classList.add('monospace');
-                                const converted = convertAddressFormat(balance.contract);
+                                const converted = convertAddressFormat(balance.contract, useBase58);
                                 const name = `${balance.symbol}(${converted.slice(0, 6) + '...'}):    `;
                                 const bal = `${parseFloat(balance.balance).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 8 })}`;
                                 option.textContent = name + bal;
@@ -290,7 +279,7 @@ document.addEventListener('DOMContentLoaded', async function() {
         const address = getQueryParam('address');
         const loadingSpinner = document.getElementById('loading-spinner');
         try {
-            const formattedAddress = convertAddressFormat(address);
+            const formattedAddress = convertAddressFormat(address, useBase58);
             const addressTitle = document.getElementById('address');
             if (addressTitle) {
                 addressTitle.textContent = formattedAddress;
@@ -320,7 +309,7 @@ document.addEventListener('DOMContentLoaded', async function() {
         const address = getQueryParam('address');
         const loadingSpinner = document.getElementById('loading-spinner');
         try {
-            const formattedAddress = convertAddressFormat(address);
+            const formattedAddress = convertAddressFormat(address, useBase58);
             document.getElementById('address').textContent = formattedAddress;
 
             // Show loading spinner
@@ -505,9 +494,9 @@ document.addEventListener('DOMContentLoaded', async function() {
             document.getElementById('token-name').textContent = tokenDetails.name;
             document.getElementById('token-symbol').textContent = tokenDetails.symbol;
             document.getElementById('total-supply').textContent = parseFloat(tokenDetails.totalSupply).toLocaleString('en-US') + ' ' + tokenDetails.symbol; 
-            document.getElementById('token-contract').textContent = convertAddressFormat(balanceData.address);
+            document.getElementById('token-contract').textContent = convertAddressFormat(balanceData.address, useBase58);
             const ownerElement = document.getElementById('owner');
-            ownerElement.textContent = convertAddressFormat(tokenDetails.owner);
+            ownerElement.textContent = convertAddressFormat(tokenDetails.owner, useBase58);
             ownerElement.href = `address.html?address=${tokenDetails.owner}&network=${blockchainNetwork}`;
             document.getElementById('decimals').textContent = tokenDetails.decimals;
 

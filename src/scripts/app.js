@@ -242,7 +242,7 @@ document.addEventListener('DOMContentLoaded', async function() {
     // Function to load the latest transactions
     async function loadLatestTransactions(page = 1) {
         try {
-            const transactionsData = await fetchBlockchainData(`history?page=${page}&pageSize=${transactionsPageSize}`);
+            const transactionsData = await fetchBlockchainData(`latesttxs?page=${page}&pageSize=${transactionsPageSize}`);
             const transactionsList = document.getElementById('transactions-list');
             if (!transactionsList) {
                 console.error('Error: #transactions-list element not found in the DOM.');

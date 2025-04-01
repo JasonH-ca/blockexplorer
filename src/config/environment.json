@@ -18,5 +18,16 @@
             "BTC": "http://127.0.0.1:3000/",
             "KANBAN": "http://127.0.0.1:3000/"
         }
+    },
+    "explorers": {
+        "BTC": "https://live.blockcypher.com/btc/tx/",
+        "FAB": "https://fabexplorer.info/#/transactions/",
+        "ETH": "https://etherscan.io/tx/",
+        "BCH": "https://explorer.bitcoin.com/bch/tx/",
+        "LTC": "https://live.blockcypher.com/ltx/tx/",
+        "DOGE": "https://dogechain.info/tx/",
+        "TRX": "https://tronscan.org/#/transaction/",
+        "MATIC": "https://polygonscan.com/tx/",
+        "BSC": "https://bscscan.com/tx/"
     }
 }

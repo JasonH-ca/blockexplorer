@@ -10,11 +10,12 @@ document.addEventListener('DOMContentLoaded', async function() {
     let erc20TotalSupply = null;
     let currentPage = 1; // Track the current page
     const pageSize = 10; // Define the page size
+    let config, environment;
 
     try {
         const response = await fetch('./config/environment.json');
-        const config = await response.json();
-        const environment = config.environment; // Get the current environment (debug or production)
+        config = await response.json();
+        environment = config.environment; // Get the current environment (debug or production)
         apiUrl = config.apiServers[environment][blockchainNetwork];
         if (!apiUrl) {
             throw new Error(`API server not configured for ${blockchainNetwork}`);
@@ -240,23 +241,72 @@ document.addEventListener('DOMContentLoaded', async function() {
 
             let process;
             if (item.deposit) {
+                const txUrl = getTxUrl(item.txHash, blockchainNetwork); // Call getTxUrl to generate the hyperlink
                 const shortTxHash = item.txHash.slice(0, 8) + '...' + item.txHash.slice(-6);
-                process = `<a href="kbtransaction.html?txid=${item.txHash}&network=${blockchainNetwork}">${shortTxHash}</a>`;
+                process = `<a href="${txUrl}" target="_blank" class="tx-link">${shortTxHash}</a>`;
+
+                // Add event listener to open the link in a popup window
+                setTimeout(() => {
+                    const txLink = document.querySelector(`.tx-link[href="${txUrl}"]`);
+                    if (txLink) {
+                        const openInPopup = (event) => {
+                            event.preventDefault(); // Prevent the default link behavior
+                            const url = txLink.href;
+                            window.open(url, '_blank', 'width=800,height=600,scrollbars=yes,resizable=yes'); // Open in a new popup window
+                        };
+
+                        // Add event listeners for both click and touchstart
+                        txLink.addEventListener('click', openInPopup);
+                        txLink.addEventListener('touchstart', openInPopup);
+                    }
+                }, 0);
             } else {
-                process = `<select>`;
+                const uniqueId = `txHashDropdown-${item.request}`; // Unique ID for each dropdown
+                process = `<select class="txHashDropdown" id="${uniqueId}">`;
                 item.txHashes.forEach(txHash => {
                     if (txHash.length < 14) {
                         return;
                     }
+                    const txUrl = getTxUrl(txHash, item.chain); // Call getTxUrl to generate the hyperlink
                     const shortTxHash = txHash.slice(0, 8) + '...' + txHash.slice(-6);
-                    process += `<option value="${txHash}">${shortTxHash}</option>`;
+                    process += `<option value="${txUrl}">${shortTxHash}</option>`;
                 });
                 process += `</select>`;
+
+                // Add event listeners to handle redirection
+                setTimeout(() => {
+                    const dropdown = document.getElementById(uniqueId);
+                    if (dropdown) {
+                        // Open in a new popup window on click
+                        dropdown.addEventListener('click', () => {
+                            const selectedValue = dropdown.value;
+                            if (selectedValue) {
+                                window.open(selectedValue, '_blank', 'width=800,height=600,scrollbars=yes,resizable=yes'); // Open in a new popup window
+                            }
+                        });
+
+                        // Open in a new popup window on touchstart (for mobile devices)
+                        dropdown.addEventListener('touchstart', () => {
+                            const selectedValue = dropdown.value;
+                            if (selectedValue) {
+                                window.open(selectedValue, '_blank', 'width=800,height=600,scrollbars=yes,resizable=yes'); // Open in a new popup window
+                            }
+                        });
+
+                        // Open in a new popup window on change (for cases where the user selects a different option)
+                        dropdown.addEventListener('change', (event) => {
+                            const selectedValue = event.target.value;
+                            if (selectedValue) {
+                                window.open(selectedValue, '_blank', 'width=800,height=600,scrollbars=yes,resizable=yes'); // Open in a new popup window
+                            }
+                        });
+                    }
+                }, 0);
             }
 
             const row = document.createElement('tr');
             row.innerHTML = `
-                <td><a href="kbtransaction.html?txid=${item.request}&network=${blockchainNetwork}">${shortTxHash}</a></td>
+                <td><a href="${getTxUrl(item.request, item.deposit ? item.chain : blockchainNetwork)}" class="tx-link">${shortTxHash}</a></td>
                 <td>${item.deposit ? 'deposit' : 'withdraw'}</td>
                 <td><a href="kbblock.html?blockNumber=${item.blockNumber}&network=${blockchainNetwork}">${item.blockNumber.toLocaleString()}</a></td>
                 <td>${age}</td>
@@ -266,6 +316,20 @@ document.addEventListener('DOMContentLoaded', async function() {
                 <td class="right-align">${parseFloat(item.value).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 8 })} ${item.token}</td>
             `;
             tbody.appendChild(row);
+
+            // Add event listeners to the first <a> tag to open in a new popup window
+            const txLink = row.querySelector('.tx-link');
+            if (txLink) {
+                const openInPopup = (event) => {
+                    event.preventDefault(); // Prevent the default link behavior
+                    const url = txLink.href;
+                    window.open(url, '_blank', 'width=800,height=600,scrollbars=yes,resizable=yes'); // Open in a new popup window
+                };
+
+                // Add event listeners for both click and touchstart
+                txLink.addEventListener('click', openInPopup);
+                txLink.addEventListener('touchstart', openInPopup);
+            }
         }
     }
 
@@ -291,23 +355,72 @@ document.addEventListener('DOMContentLoaded', async function() {
 
             let process;
             if (item.deposit) {
+                const txUrl = getTxUrl(item.txHash, blockchainNetwork); // Call getTxUrl to generate the hyperlink
                 const shortTxHash = item.txHash.slice(0, 8) + '...' + item.txHash.slice(-6);
-                process = `<a href="kbtransaction.html?txid=${item.txHash}&network=${blockchainNetwork}">${shortTxHash}</a>`;
+                process = `<a href="${txUrl}" target="_blank" class="tx-link">${shortTxHash}</a>`;
+
+                // Add event listener to open the link in a popup window
+                setTimeout(() => {
+                    const txLink = document.querySelector(`.tx-link[href="${txUrl}"]`);
+                    if (txLink) {
+                        const openInPopup = (event) => {
+                            event.preventDefault(); // Prevent the default link behavior
+                            const url = txLink.href;
+                            window.open(url, '_blank', 'width=800,height=600,scrollbars=yes,resizable=yes'); // Open in a new popup window
+                        };
+
+                        // Add event listeners for both click and touchstart
+                        txLink.addEventListener('click', openInPopup);
+                        txLink.addEventListener('touchstart', openInPopup);
+                    }
+                }, 0);
             } else {
-                process = `<select>`;
+                const uniqueId = `txHashDropdown-${item.request}`; // Unique ID for each dropdown
+                process = `<select class="txHashDropdown" id="${uniqueId}">`;
                 item.txHashes.forEach(txHash => {
-                    if ( txHash.length < 14 ) {
+                    if (txHash.length < 14) {
                         return;
                     }
+                    const txUrl = getTxUrl(txHash, item.chain); // Call getTxUrl to generate the hyperlink
                     const shortTxHash = txHash.slice(0, 8) + '...' + txHash.slice(-6);
-                    process += `<option value="${txHash}">${shortTxHash}</option>`;
+                    process += `<option value="${txUrl}">${shortTxHash}</option>`;
                 });
                 process += `</select>`;
+
+                // Add event listeners to handle redirection
+                setTimeout(() => {
+                    const dropdown = document.getElementById(uniqueId);
+                    if (dropdown) {
+                        // Open in a new popup window on click
+                        dropdown.addEventListener('click', () => {
+                            const selectedValue = dropdown.value;
+                            if (selectedValue) {
+                                window.open(selectedValue, '_blank', 'width=800,height=600,scrollbars=yes,resizable=yes'); // Open in a new popup window
+                            }
+                        });
+
+                        // Open in a new popup window on touchstart (for mobile devices)
+                        dropdown.addEventListener('touchstart', () => {
+                            const selectedValue = dropdown.value;
+                            if (selectedValue) {
+                                window.open(selectedValue, '_blank', 'width=800,height=600,scrollbars=yes,resizable=yes'); // Open in a new popup window
+                            }
+                        });
+
+                        // Open in a new popup window on change (for cases where the user selects a different option)
+                        dropdown.addEventListener('change', (event) => {
+                            const selectedValue = event.target.value;
+                            if (selectedValue) {
+                                window.open(selectedValue, '_blank', 'width=800,height=600,scrollbars=yes,resizable=yes'); // Open in a new popup window
+                            }
+                        });
+                    }
+                }, 0);
             }
 
             const row = document.createElement('tr');
             row.innerHTML = `
-                <td><a href="kbtransaction.html?txid=${item.request}&network=${blockchainNetwork}">${shortTxHash}</a></td>
+                <td><a href="${getTxUrl(item.request, item.deposit ? item.chain : blockchainNetwork)}" class="tx-link">${shortTxHash}</a></td>
                 <td>${item.deposit ? 'deposit' : 'withdraw'}</td>
                 <td><a href="kbblock.html?blockNumber=${item.blockNumber}&network=${blockchainNetwork}">${item.blockNumber.toLocaleString()}</a></td>
                 <td>${age}</td>
@@ -317,7 +430,56 @@ document.addEventListener('DOMContentLoaded', async function() {
                 <td class="right-align">${parseFloat(item.value).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 8 })} ${item.token}</td>
             `;
             tbody.appendChild(row);
+
+            // Add event listeners to the first <a> tag to open in a new popup window
+            const txLink = row.querySelector('.tx-link');
+            if (txLink) {
+                const openInPopup = (event) => {
+                    event.preventDefault(); // Prevent the default link behavior
+                    const url = txLink.href;
+                    window.open(url, '_blank', 'width=800,height=600,scrollbars=yes,resizable=yes'); // Open in a new popup window
+                };
+
+                // Add event listeners for both click and touchstart
+                txLink.addEventListener('click', openInPopup);
+                txLink.addEventListener('touchstart', openInPopup);
+            }
         }
+    }
+
+    // Function to generate transaction URL
+    function getTxUrl(txHash, chain) {
+        if (chain === 'KANBAN') {
+            return `kbtransaction.html?txid=${txHash}&network=${chain}`;
+        }
+        const txUrl = config.explorers[chain];
+        let explorerUrl = "";
+        switch (chain) {
+            case 'FAB':
+            case 'LTC':
+            case 'DOGE':
+            case 'BCH':
+            case 'FABTEST':
+                explorerUrl = `transaction.html?txid=${txHash.startsWith('0x') ? txHash.slice(2) : txHash}&network=${chain}`;
+                break;
+            case 'BTC':
+            case 'TRX':
+                console.log(`${chain}: txHash: ${txHash}`);
+                explorerUrl = `${txUrl}${txHash.startsWith('0x') ? txHash.slice(2) : txHash}`;
+                break;
+
+            case 'ETH':
+            case 'BSC':
+            case 'MATIC':
+                explorerUrl = `${txUrl}${txHash}`;
+                break;
+
+            default:
+                console.error(`Unsupported chain: ${chain}`);
+                explorerUrl = "";
+                break;
+        }
+        return explorerUrl;
     }
 
     async function loadAddressDetails(page = 1, pageSize = 10) {

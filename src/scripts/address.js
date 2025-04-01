@@ -220,6 +220,15 @@ document.addEventListener('DOMContentLoaded', async function() {
                         const tokenDetails = await fetchFRC20Details(address);
                         tokenSymbol = tokenDetails.symbol; // Store the token symbol
                     } else if ( blockchainNetwork === 'FAB' || blockchainNetwork === 'FABTEST' ) {
+                        if (balanceData.type === 'contract') {
+                            const contractDetail = await fetchBlockchainData(`contract/${address}`);
+                            if (contractDetail) {
+                                document.getElementById('contract-overview').style.display = 'block';
+                                const createdElement = document.getElementById('contract-created');
+                                createdElement.textContent = contractDetail.createtx;
+                                createdElement.href = `transaction.html?txid=${contractDetail.createtx}&network=${blockchainNetwork}`;
+                            }
+                        }
                         // Populate the balance dropdown for non-FRC20 addresses
                         const tokenBalancesData = await fetchBlockchainData(`frc20balances/address/${address}?page=${page}&pageSize=1000`);
                         if (!tokenBalancesData || tokenBalancesData.length === 0) {

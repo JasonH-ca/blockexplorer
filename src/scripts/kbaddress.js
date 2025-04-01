@@ -360,7 +360,23 @@ document.addEventListener('DOMContentLoaded', async function() {
                         // Fetch and display ERC20 token details
                         const tokenDetails = await fetchERC20Details(address);
                         tokenSymbol = tokenDetails.symbol; // Store the token symbol
-                    } else if ( addressinfo.type === 'regular' ) {
+                    } else {
+                        if ( addressinfo.type === 'contract' ) {
+                            document.getElementById('contract-overview').style.display = 'block';
+                            const createdElement = document.getElementById('contract-created');
+                            createdElement.textContent = addressinfo.createtx;
+                            createdElement.href = `kbtransaction.html?txid=${addressinfo.createtx}&network=${blockchainNetwork}`;
+
+                            // Hide the balance dropdown
+                            document.getElementById('tokenbal-label').style.display = 'none';
+                            document.getElementById('balance-dropdown').style.display = 'none';
+
+                            document.querySelector('[data-tab="erc20-history"]').style.display = 'none';
+                            document.querySelector('[data-tab="v2-transfer"]').style.display = 'none';
+                            document.querySelector('[data-tab="v2-crosschain"]').style.display = 'none';
+                            document.querySelector('[data-tab="v3-crosschain"]').style.display = 'none';
+                        }
+
                         // Populate the balance dropdown for non-ERC20 addresses
                         const tokenBalancesData = await fetchBlockchainData(`erc20balances/address/${address}?page=${page}&pageSize=1000`);
                         if (!tokenBalancesData || tokenBalancesData.length === 0) {
@@ -382,15 +398,6 @@ document.addEventListener('DOMContentLoaded', async function() {
                                 balanceDropdown.appendChild(option);
                             });
                         }
-                    } else {
-                        // Hide the balance dropdown
-                        document.getElementById('tokenbal-label').style.display = 'none';
-                        document.getElementById('balance-dropdown').style.display = 'none';
-
-                        document.querySelector('[data-tab="erc20-history"]').style.display = 'none';
-                        document.querySelector('[data-tab="v2-transfer"]').style.display = 'none';
-                        document.querySelector('[data-tab="v2-crosschain"]').style.display = 'none';
-                        document.querySelector('[data-tab="v3-crosschain"]').style.display = 'none';
                     }
                 } else {
                     document.getElementById('balance').textContent = 'Not found';

@@ -738,7 +738,15 @@ nav ul li a {
     display: flex;
     align-items: center;
 }
+/* Add spacing between balance, tokens, and tokens(V2) */
+.balance-container p span {
+    margin-left: 10px;
+    margin-right: 0px; /* Adjust the spacing as needed */
+}
 
+.balance-container select {
+    margin-left: 0px; /* Add spacing between the label and dropdown */
+}
 .right-align {
     text-align: right;
 }

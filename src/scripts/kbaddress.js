@@ -464,7 +464,6 @@ document.addEventListener('DOMContentLoaded', async function() {
                 break;
             case 'BTC':
             case 'TRX':
-                console.log(`${chain}: txHash: ${txHash}`);
                 explorerUrl = `${txUrl}${txHash.startsWith('0x') ? txHash.slice(2) : txHash}`;
                 break;
 
@@ -499,9 +498,8 @@ document.addEventListener('DOMContentLoaded', async function() {
                 balanceData = await fetchBlockchainData(`balance/${address}`);
                 const addressinfo = await fetchBlockchainData(`addressinfo/${address}`);
                 if (balanceData !== null) {
-                    document.getElementById('balance').textContent = parseFloat(balanceData.balance).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 8 });
+                    document.getElementById('balance').textContent = parseFloat(balanceData.balance).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 8 }) + ' ' + ticker;
                     const addressTypeElement = document.getElementById('address-type'); // Define addressTypeElement                    
-                    console.log(`info: ${JSON.stringify(addressinfo)}`);
                     if (!addressinfo.type || addressinfo.type === 'regular') {
                         addressTypeElement.classList.add('hidden');
                     } else {
@@ -541,6 +539,7 @@ document.addEventListener('DOMContentLoaded', async function() {
 
                         // Populate the balance dropdown for non-ERC20 addresses
                         const tokenBalancesData = await fetchBlockchainData(`erc20balances/address/${address}?page=${page}&pageSize=1000`);
+                        const v2BalancesData = await fetchBlockchainData(`v2balances/address/${address}?page=${page}&pageSize=1000`);
                         if (!tokenBalancesData || tokenBalancesData.length === 0) {
                             // Hide the balance dropdown
                             document.getElementById('tokenbal-label').style.display = 'none';
@@ -555,6 +554,23 @@ document.addEventListener('DOMContentLoaded', async function() {
                                 option.classList.add('monospace');
                                 const converted = convertAddressFormat(balance.contract);
                                 const name = `${balance.symbol}(${converted.slice(0, 6) + '...'}):    `;
+                                const bal = `${parseFloat(balance.balance).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 8 })}`;
+                                option.textContent = name + bal;
+                                balanceDropdown.appendChild(option);
+                            });
+                        }
+                        if (!v2BalancesData || v2BalancesData.length === 0) {
+                            // Hide the balance dropdown
+                            document.getElementById('v2-tokenbal-label').style.display = 'none';
+                            document.getElementById('v2-balance-dropdown').style.display = 'none';
+                        } else {
+                            const balanceDropdown = document.getElementById('v2-balance-dropdown');
+                            balanceDropdown.style.display = 'inline-block';
+                            balanceDropdown.innerHTML = ''; // Clear previous options
+                            v2BalancesData.forEach(balance => {
+                                const option = document.createElement('option');
+                                option.classList.add('monospace');
+                                const name = `${balance.tokenId}:    `;
                                 const bal = `${parseFloat(balance.balance).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 8 })}`;
                                 option.textContent = name + bal;
                                 balanceDropdown.appendChild(option);
@@ -863,10 +879,6 @@ document.addEventListener('DOMContentLoaded', async function() {
     });
 
     document.getElementById('logo-link').href = `../kanban.html?network=${blockchainNetwork}`;
-    const tickerElement = document.getElementById('ticker');
-    if (tickerElement) {
-        tickerElement.textContent = ticker;
-    }
 
     // Tab switching logic
     document.querySelectorAll('.tab-button').forEach(button => {

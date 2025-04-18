@@ -695,9 +695,12 @@ document.addEventListener('DOMContentLoaded', async function() {
             const toAddress = item.to === specificAddress ? shortToAddress : `<a href="kbaddress.html?address=${item.to}&network=${blockchainNetwork}">${shortToAddress}</a>`;
             const method = item.method ? item.method : 'n/a'; // Assuming method is available in history data
 
+            // Add a red exclamation sign if the transaction is not successful
+            const txStatusIcon = item.success === false ? ' <span style="color: red;">!</span>' : '';
+
             const row = document.createElement('tr');
             row.innerHTML = `
-                <td><a href="kbtransaction.html?txid=${item.txHash}&network=${blockchainNetwork}">${shortTxHash}</a></td>
+                <td><a href="kbtransaction.html?txid=${item.txHash}&network=${blockchainNetwork}">${shortTxHash}</a>${txStatusIcon}</td>
                 <td>${method}</td>
                 <td><a href="kbblock.html?blockNumber=${item.blockNumber}&network=${blockchainNetwork}">${item.blockNumber.toLocaleString()}</a></td>
                 <td>${transactionTime}</td>

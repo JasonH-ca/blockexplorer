@@ -141,7 +141,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                 <td>${age}</td>
                 <td>${fromAddress}</td>
                 <td>${toAddress}</td>
-                <td class="right-align">${parseFloat(item.amount).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 8 })} ${myToken}</td>
+                <td>${parseFloat(item.amount).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 8 })} ${myToken}</td>
             `;
             tbody.appendChild(row);
         }

@@ -416,12 +416,6 @@ nav ul li a {
     margin: 5px 0;
 }
 
-/* Right-align elements */
-.right-align {
-    display: block;
-    text-align: right;
-}
-
 /* Style positive amounts in green */
 .positive-amount {
     color: green;
@@ -756,4 +750,8 @@ nav ul li a {
     font-size: 14px;
     font-weight: 400;
     line-height: 1.5;
+}
+
+.sub-row {
+    background-color: #f9f9f9; /* Light background for sub-rows */
 }

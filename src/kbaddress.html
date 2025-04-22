@@ -79,8 +79,10 @@
         <div class="tabs">
             <button class="tab-button active" data-tab="history">All</button>
             <button class="tab-button" data-tab="erc20-history">ERC20</button>
+            <button class="tab-button" data-tab="orders">Orders</button> <!-- New Orders tab -->
+            <button class="tab-button" data-tab="trades">Trades</button> <!-- New Trades tab -->
             <button class="tab-button" data-tab="v3-crosschain">Deposit/Withdraw(V3)</button>
-            <button class="tab-button" data-tab="holders">Holders</button> <!-- New tab button for holders -->
+            <button class="tab-button" data-tab="holders">Holders</button>
             <button class="tab-button" data-tab="v2-transfer">Transfer(V2)</button>
             <button class="tab-button" data-tab="v2-crosschain">Deposit/Withdraw(V2)</button>
         </div>
@@ -129,6 +131,52 @@
                 <button id="erc20-prev-page" disabled>Prev</button>
                 <span id="erc20-page-info">Page 1</span>
                 <button id="erc20-next-page">Next</button>
+            </div>
+        </div>
+        <div id="orders-tab" class="tab-content"> <!-- New Orders tab content -->
+            <table id="orders-table" class="styled-table">
+                <thead>
+                    <tr>
+                        <th>TxID</th>
+                        <th>Order</th>
+                        <th>Block</th>
+                        <th>Type</th>
+                        <th>Pair</th>
+                        <th>Price</th>
+                        <th>Amount</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Orders data will be inserted here by JavaScript -->
+                </tbody>
+            </table>
+            <div id="orders-pagination-controls">
+                <button id="orders-prev-page" disabled>Prev</button>
+                <span id="orders-page-info">Page 1</span>
+                <button id="orders-next-page">Next</button>
+            </div>
+        </div>
+        <div id="trades-tab" class="tab-content"> <!-- New Trades tab content -->
+            <table id="trades-table" class="styled-table">
+                <thead>
+                    <tr>
+                        <th>TxID</th>
+                        <th>Block</th>
+                        <th>Order</th>
+                        <th>From</th>
+                        <th>To</th>
+                        <th>Amount</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Trades data will be inserted here by JavaScript -->
+                </tbody>
+            </table>
+            <div id="trades-pagination-controls">
+                <button id="trades-prev-page" disabled>Prev</button>
+                <span id="trades-page-info">Page 1</span>
+                <button id="trades-next-page">Next</button>
             </div>
         </div>
         <div id="holders-tab" class="tab-content"> <!-- New tab content for holders -->

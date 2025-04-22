@@ -140,7 +140,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                 <td>${age}</td>
                 <td>${fromAddress}</td>
                 <td>${toAddress}</td>
-                <td class="right-align">${parseFloat(item.value).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 8 })} ${myToken}</td>
+                <td>${parseFloat(item.value).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 8 })} ${myToken}</td>
             `;
             tbody.appendChild(row);
         }
@@ -213,7 +213,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                 <td>${age}</td>
                 <td>${fromAddress}</td>
                 <td>${toAddress}</td>
-                <td class="right-align">${parseFloat(item.value).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 8 })} ${item.token}</td>
+                <td>${parseFloat(item.value).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 8 })} ${item.token}</td>
             `;
             tbody.appendChild(row);
         }
@@ -313,7 +313,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                 <td>${toAddress}</td>
                 <td>${item.chain}</td>
                 <td>${process}</td>
-                <td class="right-align">${parseFloat(item.value).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 8 })} ${item.token}</td>
+                <td>${parseFloat(item.value).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 8 })} ${item.token}</td>
             `;
             tbody.appendChild(row);
 
@@ -427,7 +427,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                 <td>${toAddress}</td>
                 <td>${item.chain}</td>
                 <td>${process}</td>
-                <td class="right-align">${parseFloat(item.value).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 8 })} ${item.token}</td>
+                <td>${parseFloat(item.value).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 8 })} ${item.token}</td>
             `;
             tbody.appendChild(row);
 
@@ -517,6 +517,8 @@ document.addEventListener('DOMContentLoaded', async function() {
                         document.querySelector('[data-tab="v2-transfer"]').style.display = 'none';
                         document.querySelector('[data-tab="v2-crosschain"]').style.display = 'none';
                         document.querySelector('[data-tab="v3-crosschain"]').style.display = 'none';
+                        document.querySelector('[data-tab="orders"]').style.display = 'none';
+                        document.querySelector('[data-tab="trades"]').style.display = 'none';
                         // Fetch and display ERC20 token details
                         const tokenDetails = await fetchERC20Details(address);
                         tokenSymbol = tokenDetails.symbol; // Store the token symbol
@@ -535,6 +537,8 @@ document.addEventListener('DOMContentLoaded', async function() {
                             document.querySelector('[data-tab="v2-transfer"]').style.display = 'none';
                             document.querySelector('[data-tab="v2-crosschain"]').style.display = 'none';
                             document.querySelector('[data-tab="v3-crosschain"]').style.display = 'none';
+                            document.querySelector('[data-tab="orders"]').style.display = 'none';
+                            document.querySelector('[data-tab="trades"]').style.display = 'none';    
                         }
 
                         // Populate the balance dropdown for non-ERC20 addresses
@@ -661,6 +665,198 @@ document.addEventListener('DOMContentLoaded', async function() {
                 loadingSpinner.style.display = 'none';
             }
         }
+    }
+
+    async function loadOrders(page = 1, pageSize = 10) {
+        const address = getQueryParam('address');
+        const loadingSpinner = document.getElementById('loading-spinner');
+        try {
+            const formattedAddress = convertAddressFormat(address);
+            const addressTitle = document.getElementById('address');
+            if (addressTitle) {
+                addressTitle.textContent = formattedAddress;
+            }
+
+            // Show loading spinner
+            if (loadingSpinner) {
+                loadingSpinner.style.display = 'block';
+            }
+
+            const ordersData = await fetchBlockchainData(`orders/${address}?page=${page}&pageSize=${pageSize}`);
+            if (ordersData) {
+                displayOrders(ordersData, page, pageSize);
+            }
+            updateOrdersPagination(ordersData, page, pageSize);
+        } catch (error) {
+            console.error('Error fetching orders:', error);
+        } finally {
+            // Hide loading spinner
+            if (loadingSpinner) {
+                loadingSpinner.style.display = 'none';
+            }
+        }
+    }
+
+    async function loadTrades(page = 1, pageSize = 10) {
+        const address = getQueryParam('address');
+        const loadingSpinner = document.getElementById('loading-spinner');
+        try {
+            const formattedAddress = convertAddressFormat(address);
+            const addressTitle = document.getElementById('address');
+            if (addressTitle) {
+                addressTitle.textContent = formattedAddress;
+            }
+
+            // Show loading spinner
+            if (loadingSpinner) {
+                loadingSpinner.style.display = 'block';
+            }
+
+            const tradesData = await fetchBlockchainData(`trades/${address}?page=${page}&pageSize=${pageSize}`);
+            if (tradesData) {
+                displayTrades(tradesData, page, pageSize);
+            }
+            updateTradesPagination(tradesData, page, pageSize);
+        } catch (error) {
+            console.error('Error fetching trades:', error);
+        } finally {
+            // Hide loading spinner
+            if (loadingSpinner) {
+                loadingSpinner.style.display = 'none';
+            }
+        }
+    }
+
+    function displayOrders(ordersData, page, pageSize) {
+        const ordersContainer = document.getElementById('orders-table');
+        if (!ordersContainer) {
+            console.error('Orders container not found');
+            return;
+        }
+
+        const tbody = ordersContainer.querySelector('tbody');
+        tbody.innerHTML = ''; // Clear previous orders
+
+        ordersData.forEach((order, index) => {
+            const shortOrderHash = order.orderHash.slice(0, 8) + '...' + order.orderHash.slice(-6);
+            const shortTxHash = order.txHash.slice(0, 8) + '...' + order.txHash.slice(-6);
+            const txUrl = `kbtransaction.html?txid=${order.txHash}&network=${blockchainNetwork}`; // Generate the transaction URL
+            const blockUrl = `kbblock.html?blockNumber=${order.blockNumber}&network=${blockchainNetwork}`; // Generate the block URL
+
+            let status = '';
+            if (order.status === 1) {
+                status = '<span class="open">Open</span>';
+            } else if (order.status === 2) {
+                status = '<span class="cancelled">Cancelled</span>';
+            } else if (order.status === 3) {
+                status = '<span class="closed">Closed</span>';
+            } else {
+                status = '<span class="unknown">Unknown</span>';
+            }
+            const pair = order.target + '/' + order.base;
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td><a href="${txUrl}" target="_blank">${shortTxHash}</a></td>
+                <td>${shortOrderHash}</td>
+                <td><a href="${blockUrl}" target="_blank">${order.blockNumber.toLocaleString()}</a></td>
+                <td>${order.type ? 'buy' : 'sell'}</td>
+                <td>${pair}</td>
+                <td>${parseFloat(order.price).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 8 })}</td>
+                <td>${parseFloat(order.amount).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 8 })}</td>
+                <td>${status}</td>
+            `;
+            tbody.appendChild(row);
+        });
+    }
+
+    function displayTrades(tradesData, page, pageSize) {
+        const tradesContainer = document.getElementById('trades-table');
+        if (!tradesContainer) {
+            console.error('Trades container not found');
+            return;
+        }
+
+        const tbody = tradesContainer.querySelector('tbody');
+        tbody.innerHTML = ''; // Clear previous trades
+
+        tradesData.forEach((trade, index) => {
+            const shortTxHash = trade.txHash.slice(0, 8) + '...' + trade.txHash.slice(-6);
+            const txUrl = `kbtransaction.html?txid=${trade.txHash}&network=${blockchainNetwork}`; // Generate the transaction URL
+            const blockUrl = `kbblock.html?blockNumber=${trade.blockNumber}&network=${blockchainNetwork}`; // Generate the block URL
+
+            // Shorten and hyperlink addresses if they are not the current address
+            const shortFromAddress = trade.from.slice(0, 8) + '...' + trade.from.slice(-6);
+            const shortToAddress = trade.to.slice(0, 8) + '...' + trade.to.slice(-6);
+            const fromAddress = trade.from === address
+                ? shortFromAddress
+                : `<a href="kbaddress.html?address=${trade.from}&network=${blockchainNetwork}">${shortFromAddress}</a>`;
+            const toAddress = trade.to === address
+                ? shortToAddress
+                : `<a href="kbaddress.html?address=${trade.to}&network=${blockchainNetwork}">${shortToAddress}</a>`;
+
+            // Shorten order hashes
+            const shortOrderOne = trade.orderOne.slice(0, 8) + '...' + trade.orderOne.slice(-6);
+            const shortOrderTwo = trade.orderTwo.slice(0, 8) + '...' + trade.orderTwo.slice(-6);
+
+            // Determine amount color based on whether the user's address is the `to` address
+            const amount1Color = trade.to === address ? 'green' : 'red';
+            const amount2Color = trade.to === address ? 'red' : 'green';
+
+            // Sub-row for orderOne, from, to, and amount1
+            const subRow1 = document.createElement('tr');
+            subRow1.classList.add('sub-row'); // Add a class for styling sub-rows
+            subRow1.innerHTML = `
+                <td><a href="${txUrl}" target="_blank">${shortTxHash}</a></td>
+                <td><a href="${blockUrl}" target="_blank">${trade.blockNumber}</a></td>
+                <td>${shortOrderOne}</td>
+                <td>${fromAddress}</td>
+                <td>${toAddress}</td>
+                <td style="color: ${amount1Color};" class="right-align">
+                    ${parseFloat(trade.amount1).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 8 })} ${trade.token1}
+                </td>
+                <td colspan="2"></td> <!-- Empty cells for alignment -->
+            `;
+            tbody.appendChild(subRow1);
+
+            // Sub-row for orderTwo, to, from, and amount2
+            const subRow2 = document.createElement('tr');
+            subRow2.classList.add('sub-row'); // Add a class for styling sub-rows
+            subRow2.innerHTML = `
+                <td colspan="2"></td> <!-- Empty cells for alignment -->
+                <td>${shortOrderTwo}</td>
+                <td>${toAddress}</td>
+                <td>${fromAddress}</td>
+                <td style="color: ${amount2Color};" class="right-align">
+                    ${parseFloat(trade.amount2).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 8 })} ${trade.token2}
+                </td>
+                <td colspan="2"></td> <!-- Empty cells for alignment -->
+            `;
+            tbody.appendChild(subRow2);
+        });
+    }
+
+    function updateOrdersPagination(ordersData, page, pageSize) {
+        currentPage = page; // Update the current page
+        const dataLength = ordersData ? ordersData.length : 0;
+        const prevPageButton = document.getElementById('orders-prev-page');
+        const nextPageButton = document.getElementById('orders-next-page');
+        const pageInfo = document.getElementById('orders-page-info');
+
+        prevPageButton.disabled = page === 1;
+        nextPageButton.disabled = dataLength < pageSize;
+        pageInfo.textContent = `${page}`;
+    }
+
+    function updateTradesPagination(tradesData, page, pageSize) {
+        currentPage = page; // Update the current page
+        const dataLength = tradesData ? tradesData.length : 0;
+        const prevPageButton = document.getElementById('trades-prev-page');
+        const nextPageButton = document.getElementById('trades-next-page');
+        const pageInfo = document.getElementById('trades-page-info');
+
+        prevPageButton.disabled = page === 1;
+        nextPageButton.disabled = dataLength < pageSize;
+        pageInfo.textContent = `${page}`;
     }
 
     // Function to get query parameter
@@ -881,6 +1077,28 @@ document.addEventListener('DOMContentLoaded', async function() {
         loadV3Crosschain(currentPage, pageSize);
     });
 
+    document.getElementById('orders-prev-page').addEventListener('click', () => {
+        if (currentPage > 1) {
+            currentPage--;
+            loadOrders(currentPage, pageSize);
+        }
+    });
+    document.getElementById('orders-next-page').addEventListener('click', () => {
+        currentPage++;
+        loadOrders(currentPage, pageSize);
+    });
+
+    document.getElementById('trades-prev-page').addEventListener('click', () => {
+        if (currentPage > 1) {
+            currentPage--;
+            loadTrades(currentPage, pageSize);
+        }
+    });
+    document.getElementById('trades-next-page').addEventListener('click', () => {
+        currentPage++;
+        loadTrades(currentPage, pageSize);
+    });
+
     document.getElementById('logo-link').href = `../kanban.html?network=${blockchainNetwork}`;
 
     // Tab switching logic
@@ -904,6 +1122,10 @@ document.addEventListener('DOMContentLoaded', async function() {
                 loadV2Crosschain();
             } else if (button.dataset.tab === 'v3-crosschain') {
                 loadV3Crosschain();
+            } else if (button.dataset.tab === 'orders') {
+                loadOrders();
+            } else if (button.dataset.tab === 'trades') {
+                loadTrades();
             }
         });
     });
@@ -1014,6 +1236,10 @@ document.addEventListener('DOMContentLoaded', async function() {
             const address = getQueryParam('address');
             fetchERC20Details(address);
             loadHolders(currentPage, pageSize);
+        } else if (activeTab === 'orders') {
+            loadOrders(currentPage, pageSize);
+        } else if (activeTab === 'trades') {
+            loadTrades(currentPage, pageSize);
         }
     });
 

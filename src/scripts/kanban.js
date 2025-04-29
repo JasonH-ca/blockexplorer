@@ -247,7 +247,15 @@ document.addEventListener('DOMContentLoaded', async function() {
                 console.error('Error: #transactions-list element not found in the DOM.');
                 return;
             }
-            transactionsList.innerHTML = transactionsData.map(tx => `
+
+            // Fetch sender information for each transaction
+            const transactionsWithSenders = await Promise.all(transactionsData.map(async (tx) => {
+                const transactionDetails = await fetchBlockchainData(`transaction/${tx.txHash}`);
+                const sender = transactionDetails ? transactionDetails.from : 'Unknown';
+                return { ...tx, sender };
+            }));
+
+            transactionsList.innerHTML = transactionsWithSenders.map(tx => `
                 <tr>
                     <td>
                         <a href="src/kbtransaction.html?txid=${tx.txHash}&network=${blockchainNetwork}">
@@ -257,6 +265,11 @@ document.addEventListener('DOMContentLoaded', async function() {
                     <td>
                         <a href="src/kbblock.html?blockNumber=${tx.blockNumber}&network=${blockchainNetwork}">
                             ${tx.blockNumber.toLocaleString()}
+                        </a>
+                    </td>
+                    <td>
+                        <a href="src/kbaddress.html?address=${tx.sender}&network=${blockchainNetwork}">
+                            ${tx.sender.slice(0, 8)}...${tx.sender.slice(-6)}
                         </a>
                     </td>
                 </tr>
